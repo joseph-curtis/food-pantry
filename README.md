@@ -9,7 +9,7 @@
 ```
 - Clone your team repository
  ```shell
-git clone "clone URL"
+git clone https://github.com/PCC-CIS-234A/cis234a_team_JK_LOL.git
 ```
 
 ***
