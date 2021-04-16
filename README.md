@@ -1,5 +1,14 @@
 # Getting Started
 
+## Download Java Development Kit (JDK) in IntelliJ
+
+The easiest way is to open Intellij and add/download from there.  Here are some instructions:
+https://www.jetbrains.com/help/idea/sdk.html#jdk
+
+Make sure you download OpenJDK version 16!
+
+***
+
 ## Install [Git](https://git-scm.com/downloads) on your local system
 - Start Git Shell (DOS) or Git Bash (Unix)
 - Configure your name and e-mail:
@@ -38,10 +47,3 @@ git clone https://github.com/PCC-CIS-234A/cis234a_team_JK_LOL.git
 - Create a pull request on GitHub when a feature is complete
 
 ***
-
-## Download Java Development Kit (JDK) in IntelliJ
-
-The easiest way is to open Intellij and add/download from there.  Here are some instructions:
-https://www.jetbrains.com/help/idea/sdk.html#jdk
-
-Make sure you download OpenJDK version 16!
