@@ -1,43 +1,17 @@
 /*
 ********************************************************************************
-//  Author:	    Joseph Curtis
+//  Executes to RESET THE DATABASE
+//
 //  Software:	Microsoft SQL Server Management Studio - (Transact SQL)
 //				SQL Server 2012 architecture
-//  Date:		04.20.2021
-//  Server:		cisdbss.pcc.edu
-//  Login:
-//  Password:   see secrets in repo
-//  Notes:		This script creates a Procedure that creates the SalesDB tables
-				and then inserts additional new data.
-
-// TO TEST:  run the following--
-EXECUTE resetDB;
-
-4/20/2021:    first draft, no execute permissions! Use RESET_DB.sql
+//  version:	04.20.2021
+//  Notes:      copy/paste this in SQL Server Management Studio and execute
 ********************************************************************************
 */
-/*** Activate database ***/
 USE cis234a_team_JK_LOL;
+--EXECUTE resetDB;
 
 GO
-/*** DROP procedure if exists ***/
-IF EXISTS (SELECT name FROM sys.objects WHERE name = 'resetDB')
-    BEGIN
-        DROP PROCEDURE resetDB;
-        PRINT 'resetDB procedure has been dropped';
-    END;
-ELSE
-    BEGIN
-        PRINT 'resetDB procedure did not exist so no DROP was needed';
-    END;
-
-GO
-/*** Start stored procedure: ***/
-
-CREATE PROCEDURE resetDB
-AS
-BEGIN
-
 /*** DROP statements ***/
 
     IF OBJECT_ID('RECIPIENT', 'U') IS NOT NULL
@@ -157,4 +131,3 @@ BEGIN
         , 'Worker'
     );
     PRINT 'resetDB stored procedure was sucessfully created';
-END;
