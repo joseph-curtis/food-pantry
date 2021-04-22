@@ -20,7 +20,7 @@ public class Main {
     private static void createGUI() {
         NotificationLog ui = new NotificationLog();
         JPanel root = ui.getRootPanel();
-        JFrame frame = new JFrame();
+        JFrame frame = new JFrame("Panther Pantry Electronic Notification System");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setContentPane(root);
         frame.pack();
