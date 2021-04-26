@@ -41,16 +41,28 @@ BEGIN
 /*** DROP statements ***/
 
     IF OBJECT_ID('RECIPIENT', 'U') IS NOT NULL
-        DROP TABLE RECIPIENT;
+        BEGIN
+            DROP TABLE RECIPIENT;
+            PRINT 'RECIPIENT table has been dropped';
+        END;
 
     IF OBJECT_ID('MESSAGE', 'U') IS NOT NULL
-        DROP TABLE MESSAGE;
+        BEGIN
+            DROP TABLE MESSAGE;
+            PRINT 'MESSAGE table has been dropped';
+        END;
 
     IF OBJECT_ID('TEMPLATE', 'U') IS NOT NULL
-        DROP TABLE TEMPLATE;
+        BEGIN
+            DROP TABLE TEMPLATE;
+            PRINT 'TEMPLATE table has been dropped';
+        END;
 
     IF OBJECT_ID('PERSON', 'U') IS NOT NULL
-        DROP TABLE PERSON;
+        BEGIN
+            DROP TABLE PERSON;
+            PRINT 'PERSON table has been dropped';
+        END;
 
 
 /*** CREATE tables ***/
@@ -61,7 +73,8 @@ BEGIN
         , firstname         NVARCHAR(35)        NULL
         , lastname          NVARCHAR(35)        NULL
         , username          VARCHAR(30)         NOT NULL
-        , password_hash     VARCHAR(64)         NOT NULL
+        , password_hash     VARBINARY(128)      NOT NULL
+                            /* allows 64 char password and 64 char salt */
         , email             VARCHAR(60)         NOT NULL
         , role              NVARCHAR(30)        NOT NULL
         );
@@ -122,39 +135,12 @@ BEGIN
     CREATE UNIQUE INDEX IDX_PERSON_username
         ON PERSON (username ASC);
 
-    CREATE UNIQUE INDEX IDX_PERSON_email
+    CREATE INDEX IDX_PERSON_email
         ON PERSON (email ASC);
 
     CREATE UNIQUE INDEX IDX_TEMPLATE_name
         ON TEMPLATE (name ASC);
 
-/************************************************/
-/*** INSERT test data & managers/workers here ***/
 
-    DECLARE @test_manager_id INT = 1;
-    DECLARE @test_worker_id INT = 2;
-
-    INSERT INTO PERSON (PK_Person_ID, firstname, lastname, username,
-                        password_hash, email, role)
-    VALUES (
-        @test_manager_id
-        , 'test'
-        , 'manager'
-        , 'testmanager'
-        , '11111111'
-        , 'manager+test@pcc.edu'
-        , 'Manager'
-    );
-    INSERT INTO PERSON (PK_Person_ID, firstname, lastname, username,
-                        password_hash, email, role)
-    VALUES (
-        @test_worker_id
-        , 'test'
-        , 'worker'
-        , 'testworker'
-        , '99999999'
-        , 'test+worker@pcc.edu'
-        , 'Worker'
-    );
     PRINT 'resetDB stored procedure was sucessfully created';
 END;
