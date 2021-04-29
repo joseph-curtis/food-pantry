@@ -1,18 +1,25 @@
 package logic;
 
+import data.Database;
+
+import java.util.ArrayList;
 import java.util.Date; //maybe simpledate
 
 public class Message {
     private String subject;
     private String textBody;
     private String fromPersonId;
-    private Date   dateTime;
+    private String   dateTime;
 
-    public Message(String subject, String textBody, String fromPersonId, Date dateTime) {
+    public Message(String subject, String textBody, String fromPersonId, String dateTime) {
         this.subject = subject;
         this.textBody = textBody;
         this.fromPersonId = fromPersonId;
         this.dateTime = dateTime;
+    }
+
+    public static ArrayList<Message> getAllMessages(){
+        return Database.getAllMessages();
     }
 
     public String getSubject() {
@@ -27,7 +34,7 @@ public class Message {
         return fromPersonId;
     }
 
-    public Date getDateTime() {
+    public String getDateTime() {
         return dateTime;
     }
 
