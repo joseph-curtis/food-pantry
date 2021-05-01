@@ -1,5 +1,8 @@
 package presentation;
 
+import logic.ActiveStaffMember;
+import logic.EmailNotification;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -19,15 +22,33 @@ public class SendNotificationForm {
     private JPanel subjectPanel;
     private JScrollPane bodyScrollPane;
     private JPanel bodyPanel;
+    private JPanel recipientPanel;
+    private JLabel recipientLabel;
+    private JTextField recipientTextField;
 
     /**
      * Constructor sets properties for declared components
      */
-    public SendNotificationForm() {
+    public SendNotificationForm(ActiveStaffMember currentUser) {
         rootPanel.setPreferredSize(new Dimension(400, 500));
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                boolean success = false;
+                try {
+                    success = EmailNotification.send(currentUser.getEmail(), recipientTextField.getText()
+                            , subjectTextField.getText(), bodyTextArea.getText());
+                } catch (RuntimeException exception) {
+                    JOptionPane.showMessageDialog(rootPanel,
+                            "An address was incorrect!  Check the following addresses:\n"
+                            + recipientTextField.getText());
+                }
+                if (success) {
+                    System.out.println("Email sent successfully!");
+                } else {
+                    System.out.println("Network unavailable!");
+                }
+
                 JOptionPane.showMessageDialog(rootPanel,
                         "Subject: " + subjectTextField.getText()
                                 + "\nBody: " + bodyTextArea.getText());

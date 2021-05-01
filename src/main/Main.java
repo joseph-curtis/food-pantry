@@ -12,26 +12,8 @@ public class Main
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                createGUI();
+                Controller.start();
             }
         });
-    }
-
-    /**
-     * Create the GUI and show it.  For thread safety,
-     * this method should be invoked from the
-     * event-dispatching thread.
-     */
-    private static void createGUI() {
-        SendNotificationForm ui = new SendNotificationForm();
-        JPanel root = ui.getRootPanel();
-
-        JFrame frame = new JFrame("Send Notification Demo");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setContentPane(root);
-
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
     }
 }
