@@ -10,10 +10,10 @@ public class ActiveStaffMember {
     private String name;
     private String email;
 
-    public ActiveStaffMember() {
-        person_id = 1;
-        name = "Panther Pantry";
-        email = "teamcjklol@gmail.com";
+    public ActiveStaffMember(int person_id, String name, String email) {
+        this.person_id = person_id;
+        this.name = name;
+        this.email = email;
     }
 
     public String getName() {

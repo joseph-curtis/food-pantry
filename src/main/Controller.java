@@ -1,5 +1,6 @@
 package main;
 
+import data.Database;
 import logic.ActiveStaffMember;
 import presentation.SendNotificationForm;
 
@@ -16,7 +17,7 @@ public class Controller {
      * event-dispatching thread.
      */
     public static void createGUI() {
-        SendNotificationForm ui = new SendNotificationForm(new ActiveStaffMember());
+        SendNotificationForm ui = new SendNotificationForm(Database.getCurrentUser());
         JPanel root = ui.getRootPanel();
 
         JFrame frame = new JFrame("Send Notification Demo");

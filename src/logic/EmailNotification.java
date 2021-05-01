@@ -10,6 +10,7 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+// sourced some code from https://github.com/PCC-CIS-234A/JavaMail/blob/master/src/Main.java
 public class EmailNotification {
     private static final String username = "teamcjklol@gmail.com";
     private static final String password = "zkymvgnqnmjezozv";
@@ -48,12 +49,12 @@ public class EmailNotification {
             message.setContent(body, "text/html");
 
             Transport.send(message);
-
             return true;
-
-        } catch (AddressException e) {
+        }
+        catch (AddressException e) {
             throw new RuntimeException(e);
-        } catch (javax.mail.MessagingException e) {
+        }
+        catch (javax.mail.MessagingException e) {
             e.printStackTrace();
             return false;
         }

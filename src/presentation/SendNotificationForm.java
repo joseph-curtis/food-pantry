@@ -37,7 +37,7 @@ public class SendNotificationForm {
                 boolean success = false;
                 try {
                     success = EmailNotification.send(currentUser.getEmail(), recipientTextField.getText()
-                            , subjectTextField.getText(), bodyTextArea.getText());
+                            , subjectTextField.getText(), bodyTextArea.getText() + "\n From:\n" + currentUser.getName());
                 } catch (RuntimeException exception) {
                     JOptionPane.showMessageDialog(rootPanel,
                             "An address was incorrect!  Check the following addresses:\n"
@@ -51,7 +51,8 @@ public class SendNotificationForm {
 
                 JOptionPane.showMessageDialog(rootPanel,
                         "Subject: " + subjectTextField.getText()
-                                + "\nBody: " + bodyTextArea.getText());
+                                + "\nBody: " + bodyTextArea.getText()
+                                + "\n From:\n" + currentUser.getName());
             }
         });
     }
