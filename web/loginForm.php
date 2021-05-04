@@ -29,12 +29,12 @@ Author: Katie Pundt
     <div id="wrapper">
         <h2>Login</h2>
     <div id="formWrapper">
-        <form method="get" action="../web/assets/loginConfirmationPage.php">
+        <form method="post" action="../web/assets/loginConfirmationPage.php">
             <div id="formContents">
                 <label for="username">Username</label>
                 <input id="username" name="username" type="text" required><br>
                 <label for="password">Password</label>
-                <input id="password" type="password" required><br>
+                <input id="password" name="password" type="password" required><br>
                 <div id="result"></div>
                 <input type="submit" id="loginButton" value="Submit" formtarget="_blank">
                 <div id="result"></div>
