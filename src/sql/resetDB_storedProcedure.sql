@@ -3,11 +3,10 @@
 //  Author:	    Joseph Curtis
 //  Software:	Microsoft SQL Server Management Studio - (Transact SQL)
 //				SQL Server 2012 architecture
-//  Date:		04.20.2021
+
+//  Date:		05.03.2021
 //  Server:		cisdbss.pcc.edu
-//  Login:
-//  Password:   see secrets in repo
-//  Notes:		This script creates a Procedure that creates the SalesDB tables
+//  Notes:		This script creates a Procedure that creates the DB tables
 				and then inserts additional new data.
 
 // TO TEST:  run the following--
@@ -68,8 +67,8 @@ BEGIN
 /*** CREATE tables ***/
 
     CREATE TABLE PERSON
-        (
-        PK_Person_ID        INT                 NOT NULL
+        (						/*autonumber*/
+        PK_Person_ID        INT IDENTITY (1, 1) NOT NULL	PRIMARY KEY
         , firstname         NVARCHAR(35)        NULL
         , lastname          NVARCHAR(35)        NULL
         , username          VARCHAR(30)         NOT NULL
@@ -77,17 +76,18 @@ BEGIN
                             /* allows 64 char password and 64 char salt */
         , email             VARCHAR(60)         NOT NULL
         , role              NVARCHAR(30)        NOT NULL
+        , phone             NVARCHAR(10)        NULL
         );
     CREATE TABLE TEMPLATE
         (
-        PK_Template_ID      INT                 NOT NULL
+        PK_Template_ID      INT IDENTITY (1, 1) NOT NULL	PRIMARY KEY
         , name              NVARCHAR(45)        NOT NULL
         , temp_subject      NVARCHAR(78)        NULL
         , temp_body         NVARCHAR(4000)      NULL
         );
     CREATE TABLE MESSAGE
         (
-        PK_Message_ID       INT                 NOT NULL
+        PK_Message_ID       INT IDENTITY (1, 1) NOT NULL	PRIMARY KEY
         , FK_FromPerson_ID  INT                 NOT NULL
         , FK_Template_ID    INT                 NULL
         , subject           NVARCHAR(78)        NULL
@@ -96,40 +96,28 @@ BEGIN
         );
     CREATE TABLE RECIPIENT
         (
-        PK_Recipient_ID     INT                 NOT NULL
+        PK_Recipient_ID     INT IDENTITY (1, 1) NOT NULL	PRIMARY KEY
         , FK_ToPerson_ID    INT                 NOT NULL
         , FK_Message_ID     INT                 NOT NULL
         , to_email          VARCHAR(60)         NOT NULL
         );
-    -- add PK constraints:
-    ALTER TABLE PERSON
-        ADD CONSTRAINT PersonID_PK PRIMARY KEY (PK_Person_ID);
-
-    ALTER TABLE TEMPLATE
-        ADD CONSTRAINT TemplateID_PK PRIMARY KEY (PK_Template_ID);
-
-    ALTER TABLE MESSAGE
-        ADD CONSTRAINT MessageID_PK PRIMARY KEY (PK_Message_ID);
-
-    ALTER TABLE RECIPIENT
-        ADD CONSTRAINT RecipientID_PK PRIMARY KEY (PK_Recipient_ID);
 
     -- add FK constraints:
     ALTER TABLE MESSAGE
-        ADD CONSTRAINT FK_PERSON_FromPersonID FOREIGN KEY (FK_FromPerson_ID)
-        REFERENCES PERSON(PK_Person_ID);
+        ADD CONSTRAINT FK_MESSAGE_FromPerson_PERSON_id
+		FOREIGN KEY (FK_FromPerson_ID) REFERENCES PERSON(PK_Person_ID);
 
     ALTER TABLE MESSAGE
-        ADD CONSTRAINT FK_TEMPLATE_TemplateID FOREIGN KEY (FK_Template_ID)
-        REFERENCES TEMPLATE(PK_Template_ID);
+        ADD CONSTRAINT FK_MESSAGE_template_TEMPLATE_id
+		FOREIGN KEY (FK_Template_ID) REFERENCES TEMPLATE(PK_Template_ID);
 
     ALTER TABLE RECIPIENT
-        ADD CONSTRAINT FK_PERSON_ToPersonID FOREIGN KEY (FK_ToPerson_ID)
-        REFERENCES PERSON(PK_Person_ID);
+        ADD CONSTRAINT FK_RECIPIENT_ToPerson_PERSON_id
+		FOREIGN KEY (FK_ToPerson_ID) REFERENCES PERSON(PK_Person_ID);
 
     ALTER TABLE RECIPIENT
-        ADD CONSTRAINT FK_MESSAGE_MessageID FOREIGN KEY (FK_Message_ID)
-        REFERENCES MESSAGE(PK_Message_ID);
+        ADD CONSTRAINT FK_RECIPIENT_message_MESSAGE_id
+		FOREIGN KEY (FK_Message_ID) REFERENCES MESSAGE(PK_Message_ID);
 
     -- create indexes:
     CREATE UNIQUE INDEX IDX_PERSON_username
@@ -142,5 +130,5 @@ BEGIN
         ON TEMPLATE (name ASC);
 
 
-    PRINT 'resetDB stored procedure was sucessfully created';
+    PRINT 'DB tables were sucessfully re-created';
 END;
