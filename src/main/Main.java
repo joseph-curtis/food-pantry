@@ -1,14 +1,20 @@
 package main;
-
+/**
+ * @author Jack Dillon
+ * @version 05.05.21
+ */
 import presentation.NotificationLog;
-import com.toedter.calendar.JCalendar;
+//import presentation.GUIForm;
+//import presentation.TabbedPaneForm;
 
 import javax.swing.*;
 
 public class Main {
-    private static JCalendar startPicker;
-
-    public static void main(String[] args){
+    /**
+     * Main method. Every program has to start somewhere.
+     * @param args
+     */
+    public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -17,6 +23,9 @@ public class Main {
         });
     }
 
+    /**
+     * Instantiates the UI
+     */
     private static void createGUI() {
         NotificationLog ui = new NotificationLog();
         JPanel root = ui.getRootPanel();
