@@ -53,6 +53,7 @@ VALUES (
     , 'joe.curtis@pcc.edu'
 	, 9712279173
     , 'Worker'
+);
 
 /* ============================= */
 /* add messages with recipients: */
@@ -74,3 +75,10 @@ VALUES (
 	, (SELECT PK_Message_ID FROM MESSAGE WHERE datetime = @messageDatetime)
 	, 'canBeAny@email.here'
 );
+
+/* ==================== */
+/* add a test template: */
+/* ==================== */
+
+INSERT INTO TEMPLATE (name, temp_subject, temp_body)
+VALUES ('blank template', 'test template', '<h1>This template is blank</h1>');
