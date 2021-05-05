@@ -43,6 +43,16 @@ VALUES (
 	, 5035551111
     , 'Student'
 );
+INSERT INTO PERSON (firstname, lastname, username, password_hash,
+					email, phone, role)
+VALUES (
+    'Joseph'
+    , 'Curtis'
+    , 'jcurt'
+    , HASHBYTES('SHA2_256', 'password')
+    , 'joe.curtis@pcc.edu'
+	, 9712279173
+    , 'Worker'
 
 /* ============================= */
 /* add messages with recipients: */
