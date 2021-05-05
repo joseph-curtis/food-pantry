@@ -40,10 +40,9 @@ public class EmailNotification {
                 });
 
         try {
-
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(fromAddress));
-            message.setRecipients(Message.RecipientType.TO,
+            message.addRecipients(Message.RecipientType.TO,
                     InternetAddress.parse(toAddress));
             message.setSubject(subject);
             message.setContent(body, "text/html");

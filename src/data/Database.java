@@ -1,8 +1,9 @@
 package data;
 
-import logic.ActiveStaffMember;
+import logic.Person;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 /**
  * Database class for the data layer. Note that there is only one database, so all the properties
@@ -21,7 +22,11 @@ public class Database {
     private static final String USER_AUTH
             = "SELECT PK_Person_ID, firstname, lastname, email" +
             " FROM PERSON" +
-            " WHERE (role = 'Manager' OR role = 'Worker') AND username = 'testmanager'";
+            " WHERE (role = 'Manager' OR role = 'Worker') AND username = ?";
+    private static final String GET_ALL_STUDENTS
+            = "SELECT PK_Person_ID, firstname, lastname, email" +
+            " FROM PERSON" +
+            " WHERE role = 'Student'";
 
 
     // The one and only connection object
@@ -42,23 +47,45 @@ public class Database {
 
     }
 
-    public static ActiveStaffMember getCurrentUser() {
-        ActiveStaffMember currentUser = null;
-
+    public static Person getCurrentUser(String username) {
+        Person currentUser = null;
         connect();
+
         try {
             PreparedStatement stmt = connection.prepareStatement(USER_AUTH);
+            stmt.setString(1, username);
             ResultSet rs = stmt.executeQuery();
 
             while(rs.next()){
-                currentUser = new ActiveStaffMember(rs.getInt("PK_Person_ID"),
-                        rs.getString("firstname") + " " + rs.getString("lastname"),
+                currentUser = new Person(
+                        rs.getInt("PK_Person_ID"),
+                        rs.getString("firstname"),
+                        rs.getString("lastname"),
                         rs.getString("email"));
             }
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return currentUser;
+    }
+
+    public static ArrayList<Person> getStudentList() {
+        ArrayList<Person> studentList = new ArrayList<>();
+        connect();
+
+        try {
+            PreparedStatement stmt = connection.prepareStatement(GET_ALL_STUDENTS);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                studentList.add(new Person(
+                        rs.getInt("PK_Person_ID"),
+                        rs.getString("firstname"),
+                        rs.getString("lastname"),
+                        rs.getString("email")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return studentList;
     }
 }

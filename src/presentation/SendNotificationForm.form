@@ -97,21 +97,20 @@
         <children>
           <component id="21cc9" class="javax.swing.JLabel" binding="recipientLabel">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font size="16" style="1"/>
-              <text value="Send To:"/>
+              <font size="18" style="2"/>
+              <text value="Send New Notification"/>
             </properties>
           </component>
-          <component id="89823" class="javax.swing.JTextField" binding="recipientTextField">
+          <vspacer id="1a2ca">
             <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+                <minimum-size width="15" height="15"/>
               </grid>
             </constraints>
-            <properties/>
-          </component>
+          </vspacer>
         </children>
       </grid>
     </children>

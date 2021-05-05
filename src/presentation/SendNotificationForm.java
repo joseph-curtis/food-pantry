@@ -1,12 +1,13 @@
 package presentation;
 
-import logic.ActiveStaffMember;
+import logic.Person;
 import logic.EmailNotification;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 /**
  * UI to send notifications to subscribers
@@ -24,35 +25,38 @@ public class SendNotificationForm {
     private JPanel bodyPanel;
     private JPanel recipientPanel;
     private JLabel recipientLabel;
-    private JTextField recipientTextField;
 
     /**
      * Constructor sets properties for declared components
      */
-    public SendNotificationForm(ActiveStaffMember currentUser) {
+    public SendNotificationForm(Person currentUser) {
+        String allStudentEmails = getAllStudentsEmail();
         rootPanel.setPreferredSize(new Dimension(400, 500));
+
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 boolean success = false;
                 try {
-                    success = EmailNotification.send(currentUser.getEmail(), recipientTextField.getText()
-                            , subjectTextField.getText(), bodyTextArea.getText() + "\n From:\n" + currentUser.getName());
+                    success = EmailNotification.send(
+                            currentUser.toEmailString()
+                            , allStudentEmails
+                            , subjectTextField.getText()
+                            , bodyTextArea.getText()
+                                    + "<p>From:<br/>"
+                                    + currentUser.getFirstName() + ' ' + currentUser.getLastName() + "</p>"
+                    );
                 } catch (RuntimeException exception) {
                     JOptionPane.showMessageDialog(rootPanel,
                             "An address was incorrect!  Check the following addresses:\n"
-                            + recipientTextField.getText());
+                            + "FROM= " + currentUser.toEmailString() + "; TO= " + allStudentEmails);
                 }
                 if (success) {
                     System.out.println("Email sent successfully!");
+                    JOptionPane.showMessageDialog(rootPanel, "Email sent successfully!");
                 } else {
                     System.out.println("Network unavailable!");
                 }
-
-                JOptionPane.showMessageDialog(rootPanel,
-                        "Subject: " + subjectTextField.getText()
-                                + "\nBody: " + bodyTextArea.getText()
-                                + "\n From:\n" + currentUser.getName());
             }
         });
     }
@@ -64,4 +68,14 @@ public class SendNotificationForm {
     public JPanel getRootPanel() {
         return rootPanel;
     }
+
+    private String getAllStudentsEmail() {
+        final ArrayList<Person> students = Person.getStudentList();
+        StringBuilder allStudentEmails = new StringBuilder();
+        for (Person student: students) {
+            allStudentEmails.append(student.toEmailString()).append(", ");
+        }
+        return allStudentEmails.toString();
+    }
+
 }
