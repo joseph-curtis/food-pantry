@@ -1,7 +1,6 @@
 package logic;
 
 import java.util.Properties;
-import javax.activation.DataHandler;
 import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
