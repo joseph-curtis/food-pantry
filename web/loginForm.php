@@ -1,11 +1,11 @@
 <?php
 /*
 File Name: loginForm.php
-Last Edited: 04/27/2021
+Last Edited: 05/04/2021
 Author: Katie Pundt
 */
 ?>
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">

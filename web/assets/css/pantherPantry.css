@@ -1,6 +1,6 @@
 /*
 File Name: pantherPantry.css
-Last Edited: 04/21/2021
+Last Edited: 05/05/2021
 Author: Katie Pundt
  */
 
@@ -76,6 +76,10 @@ p#register {
     margin: 10px;
     text-align: center;
  }
+
+.output {
+    text-align: center;
+}
 
 /*=== Form ===*/
 #formWrapper {
@@ -156,6 +160,10 @@ input {
     }
 
     #formWrapper {
+        grid-column: 1 / 3;
+    }
+
+    .output {
         grid-column: 1 / 3;
     }
 
