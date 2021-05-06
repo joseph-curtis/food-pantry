@@ -35,23 +35,35 @@ public class SendNotificationForm {
             @Override
             public void actionPerformed(ActionEvent e) {
                 boolean emailSentSuccess = false;
+                boolean addressError = false;
                 Notification notification = new Notification(
                         Person.getStudentList(), currentUser, subjectTextField.getText(), bodyTextArea.getText()
                 );
                 try {
                     emailSentSuccess = notification.sendEmail();
                 } catch (RuntimeException exception) {
-                    JOptionPane.showMessageDialog(rootPanel,
-                            "An address was incorrect!  Check the following addresses:\n"
-                            + "FROM= " + currentUser.toEmailString() + "; TO= " + notification.getSendToEmailString());
-                }
-                if (emailSentSuccess) {
-                    System.out.println("Email sent successfully!");
-                    JOptionPane.showMessageDialog(rootPanel, "Email sent successfully!");
+                    addressError = true;
+                    JOptionPane.showMessageDialog(rootPanel
+                            , "An address was incorrect!  Check the following addresses:\n"
+                                    + "FROM= " + currentUser.toEmailString()
+                                    + "; TO= " + notification.getSendToEmailString()
+                            , "ERROR AddressException", JOptionPane.WARNING_MESSAGE
+                    );
+                } finally {
+                    if (emailSentSuccess) {
+                        JOptionPane.showMessageDialog(rootPanel
+                                , "Email sent successfully!"
+                                , "Success", JOptionPane.INFORMATION_MESSAGE
+                        );
 
-                    notification.saveMessage();
-                } else {
-                    System.out.println("Network unavailable!");
+                        notification.saveMessage();
+
+                    } else if (!addressError) {
+                        JOptionPane.showMessageDialog(rootPanel
+                                , "Check network connection"
+                                , "Network Unavailable", JOptionPane.ERROR_MESSAGE
+                        );
+                    }
                 }
             }
         });

@@ -2,10 +2,8 @@ package logic;
 
 import java.util.ArrayList;
 import java.util.Properties;
+import javax.mail.*;
 import javax.mail.Message;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
@@ -68,15 +66,14 @@ public class Notification {
         try {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(fromAddress));
-            message.addRecipients(Message.RecipientType.TO,
-                    InternetAddress.parse(toAddress));
+            message.addRecipients(Message.RecipientType.TO, InternetAddress.parse(toAddress));
             message.setSubject(subj);
             message.setContent(body, "text/html");
 
             Transport.send(message);
             return true;
         }
-        catch (AddressException e) {
+        catch (javax.mail.internet.AddressException e) {
             throw new RuntimeException(e);
         }
         catch (javax.mail.MessagingException e) {

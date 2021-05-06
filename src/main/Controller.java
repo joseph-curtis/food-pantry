@@ -25,7 +25,7 @@ public class Controller {
         SendNotificationForm ui = new SendNotificationForm(currentUser);
         JPanel root = ui.getRootPanel();
 
-        JFrame frame = new JFrame("Send Notification Demo");
+        JFrame frame = new JFrame("Send Notification Frame");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setContentPane(root);
 
@@ -35,7 +35,8 @@ public class Controller {
 
         if (currentUser == null) {
             JOptionPane.showMessageDialog(root, staffUsername + " failed authentication!\n" +
-                    "Check Database for record, and ensure username/passwords match!");
+                    "Check Database for record, and ensure username/passwords match!"
+                    ,"LOGIN ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }
 }
