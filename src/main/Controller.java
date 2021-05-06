@@ -1,14 +1,16 @@
 package main;
 
-import data.Database;
 import logic.Person;
 import presentation.SendNotificationForm;
 
 import javax.swing.*;
 
 public class Controller {
-    // get currently logged in user (username hardcoded for now)
-    private static final Person currentUser = Person.getCurrentUser("testmanager");
+    private static String staffUsername = "cosmo.spacely";
+    private static String staffPassword = "managerpassword";
+    // get currently logged in user (username/password hardcoded for now)
+    private static final Person currentUser = Person.authenticateStaffUser(
+            staffUsername, staffPassword);
 
     public static void start() {
         createGUI();
@@ -30,5 +32,10 @@ public class Controller {
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+
+        if (currentUser == null) {
+            JOptionPane.showMessageDialog(root, staffUsername + " failed authentication!\n" +
+                    "Check Database for record, and ensure username/passwords match!");
+        }
     }
 }
