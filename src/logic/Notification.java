@@ -1,10 +1,11 @@
 package logic;
 
+import data.Database;
+
 import java.util.ArrayList;
 import java.util.Properties;
 import javax.mail.*;
 import javax.mail.Message;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -21,7 +22,7 @@ public class Notification {
 
     public Notification(ArrayList<Person> studentList, Person fromPerson, String subject, String textBody) {
         this.studentList = studentList;
-        sendToEmailString = getAllStudentsEmailString();
+        sendToEmailString = getAllEmailString();
         this.fromPerson = fromPerson;
         this.subject = subject;
         this.textBody = textBody;
@@ -32,7 +33,7 @@ public class Notification {
     @param fromPerson current user (Person object) that is sending notification
     @return true if email sent successfully
      */
-    public boolean sendEmail() {
+    public boolean sendEmail() throws RuntimeException {
         String signedTextBody = textBody + "<p>From:<br/>"
                 + fromPerson.getFirstName() + ' ' + fromPerson.getLastName() + "</p>";
 
@@ -48,9 +49,11 @@ public class Notification {
      * @return false if network is unavailable
      * @throws RuntimeException when an address given is incorrect
      */
-    public static boolean sendEmail(String fromAddress, String toAddress, String subj, String body) {
+    public static boolean sendEmail(String fromAddress
+            , String toAddress
+            , String subj
+            , String body) throws RuntimeException {
         Properties props = new Properties();
-
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
         props.put("mail.smtp.host", "smtp.gmail.com");
@@ -82,11 +85,11 @@ public class Notification {
         }
     }
 
-    public void saveMessage() {
-        // exception handling?  or set return type to boolean?
+    public void saveMessage() throws RuntimeException {
+        Database.saveMessage(fromPerson.getID(), studentList, subject, textBody);
     }
 
-    private String getAllStudentsEmailString() {
+    private String getAllEmailString() {
         StringBuilder allStudentEmails = new StringBuilder();
         for (Person student: studentList) {
             allStudentEmails.append(student.toEmailString()).append(", ");
@@ -94,6 +97,9 @@ public class Notification {
         return allStudentEmails.toString();
     }
 
+    public Person getFromPerson() {
+        return fromPerson;
+    }
     public String getSubject() {
         return subject;
     }
@@ -108,6 +114,12 @@ public class Notification {
     }
     public void setTextBody(String body) {
         textBody = body;
+    }
+    public String toString() {
+        return "###MESSAGE###\nFROM: " + fromPerson.toEmailString()
+                + "\nTO: " + sendToEmailString
+                + "\nSUBJECT: " + subject
+                + "\nBODY: " + textBody;
     }
 
 }

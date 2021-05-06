@@ -55,8 +55,18 @@ public class SendNotificationForm {
                                 , "Email sent successfully!"
                                 , "Success", JOptionPane.INFORMATION_MESSAGE
                         );
-
-                        notification.saveMessage();
+                        try {
+                            // save message to the database
+                            notification.saveMessage();
+                        } catch (RuntimeException exception) {
+                            exception.printStackTrace();
+                            JOptionPane.showMessageDialog(rootPanel
+                                    , "Check database state"
+                                    , "DATABASE ERROR", JOptionPane.ERROR_MESSAGE
+                            );
+                            // print message out to save later
+                            System.out.print(notification.toString());
+                        }
 
                     } else if (!addressError) {
                         JOptionPane.showMessageDialog(rootPanel
