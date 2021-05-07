@@ -1,39 +1,19 @@
 package main;
-/**
- * @author Jack Dillon
- * @version 05.05.21
- */
-import presentation.NotificationLog;
-//import presentation.GUIForm;
-//import presentation.TabbedPaneForm;
+
+import presentation.SendNotificationForm;
 
 import javax.swing.*;
 
-public class Main {
-    /**
-     * Main method. Every program has to start somewhere.
-     * @param args
-     */
+public class Main
+{
     public static void main(String[] args) {
+        //Schedule a job for the event-dispatching thread:
+        //creating and showing this application's GUI.
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                createGUI();
+                Controller.start();
             }
         });
-    }
-
-    /**
-     * Instantiates the UI
-     */
-    private static void createGUI() {
-        NotificationLog ui = new NotificationLog();
-        JPanel root = ui.getRootPanel();
-        JFrame frame = new JFrame("Panther Pantry Electronic Notification System");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setContentPane(root);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
     }
 }
