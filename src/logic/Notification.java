@@ -34,10 +34,10 @@ public class Notification {
     @return true if email sent successfully
      */
     public boolean sendEmail() throws RuntimeException {
-        String signedTextBody = textBody + "<p>From:<br/>"
-                + fromPerson.getFirstName() + ' ' + fromPerson.getLastName() + "</p>";
+        //String signedTextBody = textBody + "<p>From:<br/>"
+        //        + fromPerson.getFirstName() + ' ' + fromPerson.getLastName() + "</p>";
 
-        return sendEmail(fromPerson.getEmail(), sendToEmailString, subject, signedTextBody);
+        return sendEmail(fromPerson.getEmail(), sendToEmailString, subject, textBody);
     }
 
     /*
@@ -69,9 +69,11 @@ public class Notification {
         try {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(fromAddress));
-            message.addRecipients(Message.RecipientType.TO, InternetAddress.parse(toAddress));
+            // TO is the team email, all students are BCC
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(fromAddress));
+            message.addRecipients(Message.RecipientType.BCC, InternetAddress.parse(toAddress));
             message.setSubject(subj);
-            message.setContent(body, "text/html");
+            message.setContent(body, "text/plain");
 
             Transport.send(message);
             return true;
