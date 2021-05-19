@@ -1,6 +1,6 @@
 package data;
 /**
- * @author Jack Dillon
+ * @author Jack Dillon, Joseph Curtis
  * @version 05.05.21
  */
 

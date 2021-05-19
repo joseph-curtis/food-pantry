@@ -13,7 +13,7 @@ import java.awt.event.ActionListener;
  * @author Joseph Curtis
  * @version 2021.04.19
  */
-public class SendNotificationForm {
+public class SendNotificationForm extends GUIForm {
     private JPanel rootPanel;
     private JLabel subjectLabel;
     private JTextField subjectTextField;
@@ -83,6 +83,7 @@ public class SendNotificationForm {
      * getter for the root panel
      * @return the root JPanel for this form
      */
+    @Override
     public JPanel getRootPanel() {
         return rootPanel;
     }
