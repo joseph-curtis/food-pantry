@@ -1,43 +1,11 @@
 <?php
 /*
 File Name: regConfirmationPage.php
-Last Edited: 05/05/2021
+Last Edited: 05/19/2021
 Author: Katie Pundt
 */
-require 'constants.php';
-
-// check that fields are set, if they are connect to database
-if (isset($_POST["first"]) &&
-    isset($_POST["last"]) &&
-    isset($_POST["username"]) &&
-    isset($_POST["email"]) &&
-    isset($_POST["password"]) &&
-    isset($_POST["cellPhone"])) {
-
-    // connect to database
-    $conn = new PDO("sqlsrv:Server=" . DB_SERVER .";Database=" . DB_NAME, DB_USERNAME, DB_PASSWORD);
-
-    // prepare sql and bind parameters using PDO
-    $stmt = $conn->prepare("INSERT INTO PERSON (firstname, lastname, username, password_hash, email, role, phone) VALUES (:firstname, :lastname, :username, (SELECT HASHBYTES('SHA2_256', CONVERT(NVARCHAR(MAX), :password))) , :email, 'Student', :phone)");
-
-    // set parameters and execute
-    $firstName = $_POST["first"];
-    $lastName = $_POST["last"];
-    $username = $_POST["username"];
-    $password = $_POST["password"];
-    $email = $_POST["email"];
-    $cellPhone = $_POST["cellPhone"];
-    $rs = $stmt->execute([
-        ":firstname" => $firstName,
-        ":lastname" => $lastName,
-        ":username" => $username,
-        ":password" => $password,
-        ":email" => $email,
-        ":phone" => $cellPhone
-    ]);
-
-    $conn = null;
-}
+require_once 'User.php';
+require_once 'Database.php';
 
 ?>
 <!DOCTYPE html>
@@ -55,14 +23,30 @@ if (isset($_POST["first"]) &&
     <link href="css/pantherPantry.css" rel="stylesheet">
 </head>
 <body>
-    <h1>New Account Confirmation</h1>
-    <nav>
-        <a href="../../web/pantryHome.html">Home</a>
-    </nav>
-    <div id="wrapper">
-        <p class="output">Thank you <?php echo $firstName . " " . $lastName;?> for registering for the PCC Panther Pantry!</p>
-        <p class="output">A confirmation email has been sent to <?php echo $email;?>.<br>
-        You will begin receiving food pantry notifications within 24 hours.</p>
-    </div>
+<h1>New Account Confirmation</h1>
+<nav>
+    <a href="../../web/pantryHome.html">Home</a>
+    <a href="../../web/loginForm.php">Login</a>
+    <a href="../../web/registerForm.php">Create New Account</a>
+</nav>
+<div id="wrapper">
+    <p class="output"><?php
+        $firstName = $_POST["first"];
+        $lastName = $_POST["last"];
+        $username = $_POST["username"];
+        $password = $_POST["password"];
+        $email = $_POST["email"];
+        $cellPhone = $_POST["cellPhone"];
+        $account_exists = Database::duplicate_account($username);
+        if($account_exists) {
+            echo "An account with that username already exists. Please login or try again.";
+        } else {
+            Database::create_account($firstName, $lastName, $username, $password, $email, $cellPhone);
+            echo "Thank you " . $firstName . " " . $lastName . " for registering for the PCC Panther Pantry!"
+                . "<br>" . "A confirmation email has been sent to " . $email . ". "
+                . "<br>" ."You will begin receiving food pantry notifications within 24 hours.";
+        }
+        ?></p>
+</div>
 </body>
 </html>
