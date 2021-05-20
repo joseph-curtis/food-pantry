@@ -19,6 +19,8 @@ import java.sql.Date;
 import java.util.ArrayList;
 import static java.lang.System.exit;
 import logic.Person;
+import logic.User;
+
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -26,8 +28,15 @@ public class Database {
     private static final String CONNECTION_STRING = "jdbc:jtds:sqlserver://cisdbss.pcc.edu/cis234a_team_JK_LOL";
     private static final String USERNAME = "cis234a_team_JK_LOL";
     private static final String PASSWORD = "Cis234A_Team_JK_lOl_Spring_21_&(%";
+    private static final String LOGIN_SQL = "SELECT PK_Person_ID, username, password_hash, role FROM PERSON WHERE   username = ? AND password_hash = HASHBYTES('SHA2_256', CONVERT(NVARCHAR(MAX), ?));";//might not need password hash
     private static final String GET_ALL_MESSAGES_SQL = "SELECT subject, textbody, FK_FromPerson_ID, datetime FROM MESSAGE;";
-    private static final String GET_MESSAGES_BY_DATE_SQL = "SELECT subject, textbody, FK_FromPerson_ID, datetime FROM MESSAGE WHERE datetime > ? AND datetime < ?;";
+    private static final String GET_MESSAGES_BY_DATE_SQL = "SELECT PK_Message_ID, subject, textbody, datetime, firstname, lastname, COUNT(PK_Recipient_ID) AS RecCount\n" +
+                                                            "FROM MESSAGE JOIN PERSON ON FK_FromPerson_ID = PK_Person_ID\n" +
+                                                            "\tJOIN RECIPIENT ON FK_Message_ID = PK_Message_ID\n" +
+                                                            "WHERE datetime >= ? AND datetime <=   ?\n" +
+                                                            "GROUP BY PK_Message_ID, subject, textbody, datetime, firstname, lastname\n" +
+                                                            "ORDER BY datetime DESC;";
+
 
     // SQL queries
     private static final String STAFF_USER_AUTH
@@ -85,32 +94,13 @@ public class Database {
             ResultSet rs = stmt.executeQuery();
 
             while(rs.next()){
-                messages.add(new Message(rs.getString("subject"),
+                messages.add(new Message(
+                        rs.getString("firstname"),
+                        rs.getString("lastname"),
+                        rs.getString("subject"),
                         rs.getString("textbody"),
-                        rs.getString("FK_FromPerson_ID"),
-                        rs.getString("datetime")));
-            }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        return messages;
-    }
-
-    /**
-     * @deprecated
-     */
-    public static ArrayList<Message> getAllMessages() {
-        connect();
-        ArrayList<Message> messages = new ArrayList<>();
-        try {
-            PreparedStatement stmt = connection.prepareStatement(GET_ALL_MESSAGES_SQL);
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                messages.add(new Message(rs.getString("subject"),
-                        rs.getString("textbody"),
-                        rs.getString("FK_FromPerson_ID"),
-                        rs.getString("datetime")));
+                        rs.getString("datetime"),
+                        rs.getInt("RecCount")));
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -234,6 +224,35 @@ public class Database {
             throw new RuntimeException("Error writing to database: " + e);
         } finally {
             connection = null;
+        }
+    }
+
+    public User login(String username, String password){
+        User user = null;
+        connect();
+        try {
+            PreparedStatement stmt = connection.prepareStatement(LOGIN_SQL);
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()) {
+                user = new User(
+                        rs.getInt("PK_Person_ID"),
+                        rs.getString("username"),
+                        rs.getString("password_hash"),
+                        rs.getString("role"));
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return user;
+    }
+
+    public void close() {
+        try {
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
     }
 }

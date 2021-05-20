@@ -1,17 +1,15 @@
 package main;
 
-import logic.Person;
+import logic.User;
+import presentation.LoginForm;
 import presentation.NotificationLog;
-import presentation.SendNotificationForm;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class Controller {
-    private static String staffUsername = "cosmo.spacely";
-    private static String staffPassword = "managerpassword";
-    // get currently logged in user (username/password hardcoded for now)
-    private static final Person currentUser = Person.authenticateStaffUser(
-            staffUsername, staffPassword);
+    private static User mUser = null;
+    private static JFrame mFrame = null;
 
     public static void start() {
         createGUI();
@@ -23,23 +21,32 @@ public class Controller {
      * event-dispatching thread.
      */
     public static void createGUI() {
-        // SendNotificationForm ui = new SendNotificationForm(currentUser);
-        NotificationLog ui = new NotificationLog();
+        mFrame = new JFrame("Send Notification Frame");
+        mFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        showLogin();
+    }
 
-        JPanel root = ui.getRootPanel();
+    public static void showLogin() {
+        mFrame.getContentPane().removeAll();
+        mFrame.getContentPane().add(new LoginForm().getRootPanel());
+        mFrame.pack();
+        mFrame.setLocationRelativeTo(null);
+        mFrame.setVisible(true);
+    }
 
-        JFrame frame = new JFrame("Send Notification Frame");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setContentPane(root);
+    public static void showUI(){
+        mFrame.getContentPane().removeAll();
+        mFrame.getContentPane().add(new NotificationLog().getRootPanel());
+        mFrame.pack();
+        mFrame.setLocationRelativeTo(null);
+        mFrame.setVisible(true);
+    }
 
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+    public static void login() {
+        showUI();
+    }
 
-        if (currentUser == null) {
-            JOptionPane.showMessageDialog(root, staffUsername + " failed authentication!\n" +
-                    "Check Database for record, and ensure username/passwords match!"
-                    ,"LOGIN ERROR", JOptionPane.ERROR_MESSAGE);
-        }
+    public static void setUser(User user) {
+        mUser = user;
     }
 }
