@@ -1,6 +1,7 @@
 package main;
 
 import logic.Person;
+import presentation.NotificationLog;
 import presentation.SendNotificationForm;
 
 import javax.swing.*;
@@ -23,6 +24,8 @@ public class Controller {
      */
     public static void createGUI() {
         SendNotificationForm ui = new SendNotificationForm(currentUser);
+        //NotificationLog ui = new NotificationLog();
+
         JPanel root = ui.getRootPanel();
 
         JFrame frame = new JFrame("Send Notification Frame");
