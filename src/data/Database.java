@@ -12,6 +12,7 @@ import java.util.ArrayList;
  * NOTES:  5.5.2021 fixed HASHBYTES issue.
  */
 //https://github.com/PCC-CIS-234A/DBRoundTrip/blob/master/src/data/Database.java as template
+
 public class Database {
     private static final String CONNECTION_STRING = "jdbc:jtds:sqlserver://cisdbss.pcc.edu/cis234a_team_JK_LOL";
     private static final String USERNAME = "cis234a_team_JK_LOL";

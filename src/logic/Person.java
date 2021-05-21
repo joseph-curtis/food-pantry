@@ -3,8 +3,10 @@ package logic;
 import data.Database;
 import java.util.ArrayList;
 
-/*
+/**
  * Class to save login state of current (staff) user logged in
+ * @author Joseph Curtis
+ * @version 2021.05.21
  */
 public class Person {
     private Integer person_id;
@@ -23,24 +25,24 @@ public class Person {
         return Database.getStudentList();
     }
 
-    /*
-    authenticate username and password
-    @param username
-    @param password
-    @return the user (Person object) if user is staff member and authenticated
+    /**
+     * authenticate username and password
+     * @param username
+     * @param password
+     * @return the user (Person object) if user is staff member and authenticated
      */
     public static Person authenticateStaffUser(String username, String password) {
         return Database.authenticateStaffUser(username, password);
     }
 
+    public Integer getID() {
+        return person_id;
+    }
     public String getFirstName() {
         return firstName;
     }
     public String getLastName() {
         return lastName;
-    }
-    public Integer getID() {
-        return person_id;
     }
     public String getEmail() {
         return email;
@@ -49,4 +51,18 @@ public class Person {
         return firstName + ' ' + lastName + " <" + email + ">";
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) return true;
+        if (o == null) return false;
+        if (o.getClass() == this.getClass()) {
+            Person p = (Person) o;
+            if (!person_id.equals(p.getID())) return false;
+            if (!firstName.equals(p.getFirstName())) return false;
+            if (!lastName.equals(p.getLastName())) return false;
+            if (!email.equals(p.getEmail())) return false;
+            return true;
+        }
+        return false;
+    }
 }
