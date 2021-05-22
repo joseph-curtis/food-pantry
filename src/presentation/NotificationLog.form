@@ -108,7 +108,9 @@
             <children>
               <component id="f80b4" class="javax.swing.JTable" binding="notificationsTable">
                 <constraints/>
-                <properties/>
+                <properties>
+                  <preferredScrollableViewportSize width="600" height="400"/>
+                </properties>
               </component>
             </children>
           </scrollpane>
