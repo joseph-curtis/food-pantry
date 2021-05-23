@@ -4,7 +4,7 @@
 //  Software:	Microsoft SQL Server Management Studio - (Transact SQL)
 //				SQL Server 2012 architecture
 
-//  Date:		05.03.2021
+//  Date:		05.23.2021
 //  Server:		cisdbss.pcc.edu
 //  Notes:		This script creates a Procedure that creates the DB tables
 				and then inserts additional new data.
@@ -62,6 +62,12 @@ BEGIN
             DROP TABLE PERSON;
             PRINT 'PERSON table has been dropped';
         END;
+	
+	IF OBJECT_ID('SETTINGS', 'U') IS NOT NULL
+		BEGIN
+			DROP TABLE SETTINGS;
+			PRINT 'SETTINGS table has been dropped';
+		END;
 
 
 /*** CREATE tables ***/
@@ -101,6 +107,15 @@ BEGIN
         , FK_Message_ID     INT                 NOT NULL
         , to_email          VARCHAR(60)         NOT NULL
         );
+	CREATE TABLE SETTINGS
+		(
+		PK_Subscriber_ID	INT IDENTITY(1, 1)	NOT NULL	PRIMARY KEY
+		, FK_Person_ID		INT				  	NULL
+		, email				BIT					NOT NULL	DEFAULT 0		
+		, sms				BIT					NOT NULL	DEFAULT 0
+		, both				BIT					NOT NULL	DEFAULT 0
+		, opt_out			BIT					NOT NULL	DEFAULT 0
+		);
 
     -- add FK constraints:
     ALTER TABLE MESSAGE
@@ -118,6 +133,10 @@ BEGIN
     ALTER TABLE RECIPIENT
         ADD CONSTRAINT FK_RECIPIENT_message_MESSAGE_id
 		FOREIGN KEY (FK_Message_ID) REFERENCES MESSAGE(PK_Message_ID);
+
+	ALTER TABLE SETTINGS
+		ADD CONSTRAINT FK_SETTINGS_Person_PERSON_id
+		FOREIGN KEY (FK_Person_ID) REFERENCES PERSON(PK_Person_ID);
 
     -- create indexes:
     CREATE UNIQUE INDEX IDX_PERSON_username
