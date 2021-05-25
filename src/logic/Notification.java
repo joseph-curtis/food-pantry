@@ -10,6 +10,13 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 // sourced some code from https://github.com/PCC-CIS-234A/JavaMail/blob/master/src/Main.java
+
+/**
+ * Holds message data and can email or text (sprint 2).
+ * Also saves message to database.
+ * @author Joseph Curtis
+ * @version 2021.05.18
+ */
 public class Notification {
     private static final String emailUsername = "teamcjklol@gmail.com";
     private static final String emailPassword = "zkymvgnqnmjezozv";
@@ -28,23 +35,22 @@ public class Notification {
         this.textBody = textBody;
     }
 
-    /*
-    sends the (instantiated) message
-    @param fromPerson current user (Person object) that is sending notification
-    @return true if email sent successfully
+    /**
+     * sends the (instantiated) message
+     * @return true if email sent successfully
      */
     public boolean sendEmail() throws RuntimeException {
-        String signedTextBody = textBody + "<p>From:<br/>"
-                + fromPerson.getFirstName() + ' ' + fromPerson.getLastName() + "</p>";
+        //String signedTextBody = textBody + "<p>From:<br/>"
+        //        + fromPerson.getFirstName() + ' ' + fromPerson.getLastName() + "</p>";
 
-        return sendEmail(fromPerson.getEmail(), sendToEmailString, subject, signedTextBody);
+        return sendEmail(fromPerson.getEmail(), sendToEmailString, subject, textBody);
     }
 
-    /*
+    /**
      * Send (via email) the notification.
      * @param fromAddress the return-to address
      * @param toAddress the address list to send to
-     * @param subject the message subject
+     * @param subj the message subject
      * @param body the message body content
      * @return false if network is unavailable
      * @throws RuntimeException when an address given is incorrect
@@ -69,9 +75,11 @@ public class Notification {
         try {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(fromAddress));
-            message.addRecipients(Message.RecipientType.TO, InternetAddress.parse(toAddress));
+            // TO is the team email, all students are BCC
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(fromAddress));
+            message.addRecipients(Message.RecipientType.BCC, InternetAddress.parse(toAddress));
             message.setSubject(subj);
-            message.setContent(body, "text/html");
+            message.setContent(body, "text/plain");
 
             Transport.send(message);
             return true;
@@ -80,6 +88,7 @@ public class Notification {
             throw new RuntimeException(e);
         }
         catch (javax.mail.MessagingException e) {
+            // network is unavailable
             e.printStackTrace();
             return false;
         }

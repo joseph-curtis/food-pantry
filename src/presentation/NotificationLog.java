@@ -1,7 +1,7 @@
 package presentation;
 /**
  * @author Jack Dillon
- * @version 05.05.21
+ * @version 05.19.21
  */
 import com.toedter.calendar.JDateChooser;
 import logic.Message;
@@ -15,7 +15,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.sql.Date;
 
-public class NotificationLog {
+public class NotificationLog extends DefaultTableModel implements GUIForm {
     private JPanel rootPanel;
     private JTable notificationsTable;
     private JButton go;
@@ -24,6 +24,7 @@ public class NotificationLog {
     private static String format;
     private Date startDate;
     private Date endDate;
+    private DefaultTableModel model;
 
     /**
      * Instantiates the table and date choosers. When the go button is pressed it shows the notification log
@@ -38,9 +39,17 @@ public class NotificationLog {
                 showNotificationLog();
             }
         });
+
+        notificationsTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = notificationsTable.getSelectedRow();
+                JOptionPane.showMessageDialog(null, model.getValueAt(row, 1).toString());
+            }
+        });
     }
 
-
+    @Override
     public JPanel getRootPanel() {
         return rootPanel;
     }
@@ -49,18 +58,22 @@ public class NotificationLog {
      * Retrieves old messages in order to display in the table
      */
     private void showNotificationLog() {
-        ArrayList<Message> messages = Message.getMessagesByDate(startDate, endDate);
-        DefaultTableModel model = (DefaultTableModel) notificationsTable.getModel();
+        if(startDate.compareTo(endDate) < 1) {
+            ArrayList<Message> messages = Message.getMessagesByDate(startDate, endDate);
+            model = (DefaultTableModel) notificationsTable.getModel();
 
-        model.setRowCount(0);
-        for(Message message : messages){
-
-            model.addRow(new Object[]{
-                message.getSubject(),
-                message.getTextBody(),
-                message.getFromPersonId(),
-                message.getDateTime().formatted(format)
-            });
+            model.setRowCount(0);
+            for(Message message : messages){
+                model.addRow(new Object[]{
+                        message.getSubject(),
+                        message.getTextBody(),
+                        message.getFullName(),
+                        message.getDateTime().formatted(format),
+                        message.getSubscriberCount()
+                });
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Please Enter a Valid Date Range");
         }
     }
 
@@ -70,7 +83,7 @@ public class NotificationLog {
     private void createTable() {
         notificationsTable.setModel(new DefaultTableModel(
                 null,
-                new String[] {"Subject", "Notification", "Sender", "Date Sent"}
+                new String[] {"Subject", "Message Body", "Sender", "Date Sent", "Recipients"}
         ));
     }
 
@@ -108,6 +121,11 @@ public class NotificationLog {
                 }
             }
         });
+    }
+
+    @Override
+    public boolean isCellEditable(int row, int column) {
+        return false;
     }
 
     /**

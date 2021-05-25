@@ -13,7 +13,7 @@ import java.awt.event.ActionListener;
  * @author Joseph Curtis
  * @version 2021.04.19
  */
-public class SendNotificationForm {
+public class SendNotificationForm implements GUIForm {
     private JPanel rootPanel;
     private JLabel subjectLabel;
     private JTextField subjectTextField;
@@ -39,6 +39,9 @@ public class SendNotificationForm {
                 Notification notification = new Notification(
                         Person.getStudentList(), currentUser, subjectTextField.getText(), bodyTextArea.getText()
                 );
+
+                // Send message confirmation dialog
+
                 try {
                     emailSentSuccess = notification.sendEmail();
                 } catch (RuntimeException exception) {
@@ -58,6 +61,8 @@ public class SendNotificationForm {
                         try {
                             // save message to the database
                             notification.saveMessage();
+                            subjectTextField.setText("");
+                            bodyTextArea.setText("");
                         } catch (RuntimeException exception) {
                             exception.printStackTrace();
                             JOptionPane.showMessageDialog(rootPanel
@@ -83,6 +88,7 @@ public class SendNotificationForm {
      * getter for the root panel
      * @return the root JPanel for this form
      */
+    @Override
     public JPanel getRootPanel() {
         return rootPanel;
     }
