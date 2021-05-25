@@ -1,17 +1,4 @@
 package data;
-/**
- * @author Jack Dillon
- * @version 05.05.21
- */
-
-/**
- * Database class for the data layer. Note that there is only one database, so all the properties
- * and methods are static, and the single connection object is shared across all calls to the
- * database methods.
- * NOTES:  5.5.2021 fixed HASHBYTES issue.
- */
-
-//https://github.com/PCC-CIS-234A/DBRoundTrip/blob/master/src/data/Database.java as template
 
 import logic.Message;
 import java.sql.*;
@@ -19,32 +6,38 @@ import java.sql.Date;
 import java.util.ArrayList;
 import static java.lang.System.exit;
 import logic.Person;
-import logic.User;
 
-import java.sql.*;
-import java.util.ArrayList;
-
+/**
+ * Database class for the data layer. Note that there is only one database, so all the properties
+ * and methods are static, and the single connection object is shared across all calls to the
+ * database methods.
+ * @author Jack Dillon, Joseph Curtis
+ * @version 2021.05.24
+ */
 public class Database {
     private static final String CONNECTION_STRING = "jdbc:jtds:sqlserver://cisdbss.pcc.edu/cis234a_team_JK_LOL";
     private static final String USERNAME = "cis234a_team_JK_LOL";
     private static final String PASSWORD = "Cis234A_Team_JK_lOl_Spring_21_&(%";
-    private static final String LOGIN_SQL = "SELECT PK_Person_ID, username, password_hash, role FROM PERSON WHERE   username = ? AND password_hash = HASHBYTES('SHA2_256', CONVERT(NVARCHAR(MAX), ?));";//might not need password hash
-    private static final String GET_ALL_MESSAGES_SQL = "SELECT subject, textbody, FK_FromPerson_ID, datetime FROM MESSAGE;";
-    private static final String GET_MESSAGES_BY_DATE_SQL = "SELECT PK_Message_ID, subject, textbody, datetime, firstname, lastname, COUNT(PK_Recipient_ID) AS RecCount\n" +
-                                                            "FROM MESSAGE JOIN PERSON ON FK_FromPerson_ID = PK_Person_ID\n" +
-                                                            "\tJOIN RECIPIENT ON FK_Message_ID = PK_Message_ID\n" +
-                                                            "WHERE datetime >= ? AND datetime <=   ?\n" +
-                                                            "GROUP BY PK_Message_ID, subject, textbody, datetime, firstname, lastname\n" +
-                                                            "ORDER BY datetime DESC;";
-
 
     // SQL queries
-    private static final String STAFF_USER_AUTH
-            = "SELECT PK_Person_ID, firstname, lastname, email" +
+    private static final String LOGIN_SQL
+            = "SELECT PK_Person_ID, firstname, lastname, username, role, email" +
             " FROM PERSON" +
-            " WHERE (role = 'Manager' OR role = 'Worker')" +
+            " WHERE (role = 'Manager'" +
+                "OR role = 'Worker')" +
             " AND username = ?" +
             " AND password_hash = HASHBYTES('SHA2_256', CONVERT(NVARCHAR(MAX), ?));";
+    private static final String GET_ALL_MESSAGES_SQL
+            = "SELECT subject, textbody, FK_FromPerson_ID, datetime" +
+            "FROM MESSAGE;";
+    private static final String GET_MESSAGES_BY_DATE_SQL
+            = "SELECT PK_Message_ID, subject, textbody, datetime, firstname, lastname," +
+                "COUNT(PK_Recipient_ID) AS RecCount\n" +
+            "FROM MESSAGE JOIN PERSON ON FK_FromPerson_ID = PK_Person_ID\n" +
+            "\tJOIN RECIPIENT ON FK_Message_ID = PK_Message_ID\n" +
+            "WHERE datetime >= ? AND datetime <=   ?\n" +
+            "GROUP BY PK_Message_ID, subject, textbody, datetime, firstname, lastname\n" +
+            "ORDER BY datetime DESC;";
     private static final String GET_ALL_STUDENTS
             = "SELECT PK_Person_ID, firstname, lastname, email" +
             " FROM PERSON" +
@@ -61,6 +54,7 @@ public class Database {
     // The one and only connection object
     public static Connection connection = null;
 
+
     /**
      * Creates database connection
      */
@@ -75,14 +69,13 @@ public class Database {
                 exit(-1);
             }
         }
-
     }
 
     /**
      * Retrieves messages that were written between a set of days
      * @param startDate
      * @param endDate
-     * @return messages
+     * @return messages as an ArrayList
      */
     public static ArrayList<Message> getMessagesByDate(Date startDate, Date endDate) {
         connect();
@@ -104,16 +97,19 @@ public class Database {
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            // close off connection
+            close();
         }
         return messages;
     }
 
-    public static Person authenticateStaffUser(String username, String password) {
+    public static Person login(String username, String password) {
         Person currentUser = null;
         connect();
 
         try {
-            PreparedStatement stmt = connection.prepareStatement(STAFF_USER_AUTH);
+            PreparedStatement stmt = connection.prepareStatement(LOGIN_SQL);
             stmt.setString(1, username);
             stmt.setString(2, password);
             ResultSet rs = stmt.executeQuery();
@@ -123,21 +119,15 @@ public class Database {
                     rs.getInt("PK_Person_ID"),
                     rs.getString("firstname"),
                     rs.getString("lastname"),
+                    rs.getString("username"),
+                    rs.getString("role"),
                     rs.getString("email")
             );
-            // close up connection leak
-            connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
-            try {
-                if (!connection.isClosed()) {
-                    connection.close();
-                }
-            } catch (SQLException except) {
-                except.printStackTrace();
-            }
         } finally {
-            connection = null;
+            // close off connection
+            close();
         }
         return currentUser;
     }
@@ -156,8 +146,6 @@ public class Database {
                         rs.getString("lastname"),
                         rs.getString("email")));
             }
-            // close up connection leak
-            connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
             try {
@@ -168,7 +156,8 @@ public class Database {
                 except.printStackTrace();
             }
         } finally {
-            connection = null;
+            // close off connection
+            close();
         }
         return studentList;
     }
@@ -209,48 +198,53 @@ public class Database {
             }
             // end transaction & commit
             connection.commit();
-            connection.close();
             System.out.println("Message saved successfully in the database.");
         } catch (SQLException e) {
             e.printStackTrace();
             try {
                 if (!connection.isClosed()) {
-                    connection.rollback();;
-                    connection.close();
+                    connection.rollback();
                 }
             } catch (SQLException except) {
                 except.printStackTrace();
             }
             throw new RuntimeException("Error writing to database: " + e);
         } finally {
-            connection = null;
+            // close off connection
+            close();
         }
     }
 
-    public User login(String username, String password){
-        User user = null;
-        connect();
+//    static public User login(String username, String password){
+//        User user = null;
+//        connect();
+//        try {
+//            PreparedStatement stmt = connection.prepareStatement(LOGIN_SQL);
+//            stmt.setString(1, username);
+//            stmt.setString(2, password);
+//            ResultSet rs = stmt.executeQuery();
+//            if(rs.next()) {
+//                user = new User(
+//                        rs.getInt("PK_Person_ID"),
+//                        rs.getString("username"),
+//                        rs.getString("password_hash"),
+//                        rs.getString("role"));
+//            }
+//        } catch (SQLException throwables) {
+//            throwables.printStackTrace();
+//        } finally {
+//            // close off connection
+//            close();
+//        }
+//        return user;
+//    }
+
+    static public void close() {
         try {
-            PreparedStatement stmt = connection.prepareStatement(LOGIN_SQL);
-            stmt.setString(1, username);
-            stmt.setString(2, password);
-            ResultSet rs = stmt.executeQuery();
-            if(rs.next()) {
-                user = new User(
-                        rs.getInt("PK_Person_ID"),
-                        rs.getString("username"),
-                        rs.getString("password_hash"),
-                        rs.getString("role"));
+            if (!connection.isClosed()) {
+                connection.close();
             }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        return user;
-    }
-
-    public void close() {
-        try {
-            connection.close();
+            connection = null;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

@@ -15,7 +15,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.sql.Date;
 
-public class NotificationLog extends DefaultTableModel {
+public class NotificationLog extends DefaultTableModel implements GUIForm {
     private JPanel rootPanel;
     private JTable notificationsTable;
     private JButton go;
@@ -49,6 +49,7 @@ public class NotificationLog extends DefaultTableModel {
         });
     }
 
+    @Override
     public JPanel getRootPanel() {
         return rootPanel;
     }

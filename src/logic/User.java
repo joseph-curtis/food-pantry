@@ -3,37 +3,28 @@ package logic;
 import data.Database;
 import main.Controller;
 
+@Deprecated
 public class User {
     private int mUserID;
     private String mUsername;
-    private String mPassword;
     private String mRole;
 
-    public User(int userID, String username, String password, String role) {
+    public User(int userID, String username, String role) {
         mUserID = userID;
         mUsername = username;
-        mPassword = password;
         mRole = role;
     }
 
-    public static void login(String em, String pwd) {
-        // some logic to verify that the user is the legitimate user.
-        Database db = new Database();
-        User user = db.login(em, pwd);
-
-
-        if(user == null) {
-            System.out.println("User not found, need an error dialog.");
-            return;
-        }
-        if(user != null) {
-            System.out.println("User " + user.getUserID() + " logged in successfully.");
-            Controller.setUser(user);
-            Controller.login();
-        } else {
-            System.out.println("Password incorrect, need an error dialog.");
-        }
-    }
+    /**
+     * some logic to verify that the user is a legitimate staff member
+     * @param em
+     * @param pwd
+     * @return a Person class
+     */
+//    public static User login(String em, String pwd) {
+//        User user = Database.login(em, pwd);
+//        return user;
+//    }
 
     public int getUserID() {
         return mUserID;
@@ -41,10 +32,6 @@ public class User {
 
     public String getUsername() {
         return mUsername;
-    }
-
-    public String getPassword() {
-        return mPassword;
     }
 
     public String getRole() {

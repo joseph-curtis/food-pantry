@@ -1,6 +1,7 @@
 package presentation;
 
-import logic.User;
+import logic.Person;
+import main.Controller;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,7 +27,18 @@ public class LoginForm {
                 if(usernameField.getText().isEmpty() || passwordField.getText().isEmpty()){
                     JOptionPane.showMessageDialog(null, "Please Enter a Name and Password");
                 } else {
-                    User.login(username, password);
+                    Person currentUser = Person.authenticateStaffUser(username, password);
+
+                    if(currentUser == null) {
+                        System.out.println("User not found, need an error dialog.");
+                    }
+                    if(currentUser != null) {
+                        System.out.println("User " + currentUser.getFirstName() + " logged in successfully.");
+                        Controller.setPerson(currentUser);
+                        Controller.showUI();
+                    } else {
+                        System.out.println("Password incorrect, need an error dialog.");
+                    }
                 }
 
             }

@@ -1,52 +1,102 @@
 package main;
 
-import logic.User;
+import logic.Person;
 import presentation.LoginForm;
 import presentation.NotificationLog;
+import presentation.GUIForm;
+import presentation.SendNotificationForm;
+import presentation.TabbedPaneForm;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class Controller {
-    private static User mUser = null;
-    private static JFrame mFrame = null;
+    private static Person currentUser = null;
+    private static JFrame windowFrame = null;
+//    private static String staffUsername = "cosmo.spacely";
+//    private static String staffPassword = "managerpassword";
+    // get currently logged in user (username/password hardcoded for now)
+    //private static final Person currentUser = Person.authenticateStaffUser(
+    //        staffUsername, staffPassword);
+ ////   >>>>>>  tabbed_gui  // re-added in by Joseph
 
     public static void start() {
-        createGUI();
-    }
-
-    /**
-     * Create the GUI and show it.  For thread safety,
-     * this method should be invoked from the
-     * event-dispatching thread.
-     */
-    public static void createGUI() {
-        mFrame = new JFrame("Send Notification Frame");
-        mFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // login form
+        windowFrame = new JFrame("Staff User Login");
+        windowFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         showLogin();
     }
 
     public static void showLogin() {
-        mFrame.getContentPane().removeAll();
-        mFrame.getContentPane().add(new LoginForm().getRootPanel());
-        mFrame.pack();
-        mFrame.setLocationRelativeTo(null);
-        mFrame.setVisible(true);
+        windowFrame.getContentPane().removeAll();
+        windowFrame.getContentPane().add(new LoginForm().getRootPanel());
+        windowFrame.pack();
+        windowFrame.setLocationRelativeTo(null);
+        windowFrame.setVisible(true);
     }
 
-    public static void showUI(){
-        mFrame.getContentPane().removeAll();
-        mFrame.getContentPane().add(new NotificationLog().getRootPanel());
-        mFrame.pack();
-        mFrame.setLocationRelativeTo(null);
-        mFrame.setVisible(true);
+    public static void showUI() {
+        windowFrame.getContentPane().removeAll();
+//        windowFrame.getContentPane().add(new NotificationLog().getRootPanel());
+//        windowFrame.pack();
+//        windowFrame.setLocationRelativeTo(null);
+//        windowFrame.setVisible(true);
+
+        // Create a JFrame to show our form in, and display the UsersTableGUI form.
+        windowFrame = new JFrame("Panther Pantry Notification Manager");
+        windowFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        TabbedPaneForm tabbedPanel = new TabbedPaneForm();
+        JTabbedPane tabbedPane = tabbedPanel.getTabbedPane();
+
+        tabbedPane.addTab("<html><body><table><tr><td height='60'>" +
+                        "Send Notification" +
+                        "</td></tr></table></body></html>",
+                null,
+                new SendNotificationForm(currentUser).getRootPanel(),
+                "Send a new email or text message");
+        tabbedPane.addTab("<html><body><table><tr><td height='60'>" +
+                        "Templates" +
+                        "</td></tr></table></body></html>",
+                null,
+                null,
+                "Create or edit notification templates");
+        tabbedPane.addTab("<html><body><table><tr><td height='60'>" +
+                        "View Notification Log" +
+                        "</td></tr></table></body></html>",
+                null,
+                new NotificationLog().getRootPanel(),
+                "See old messages sent");
+
+        showForm(tabbedPanel, windowFrame);
+
+
+        if (currentUser == null) {
+            JOptionPane.showMessageDialog(tabbedPanel.getRootPanel(), currentUser.getFirstName() + " failed authentication!\n" +
+                    "Check Database for record, and ensure username/passwords match!"
+                    ,"LOGIN ERROR", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
-    public static void login() {
-        showUI();
+    /**
+     * authenticate user, save as Person variable
+     * @param user the current user that is logging in
+     */
+    public static void setPerson(Person user) {
+        currentUser = user;
     }
 
-    public static void setUser(User user) {
-        mUser = user;
+    /**
+     * Display the GUI interface
+     * @param form to get the root panel
+     * @param frame window to display
+     */
+    public static void showForm(GUIForm form, JFrame frame) {
+        JPanel root = form.getRootPanel();
+
+        //frame.getContentPane().removeAll();
+        frame.getContentPane().add(root);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 }
