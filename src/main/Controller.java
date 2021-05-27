@@ -1,23 +1,13 @@
 package main;
 
 import logic.Person;
-import presentation.LoginForm;
-import presentation.NotificationLog;
-import presentation.GUIForm;
-import presentation.SendNotificationForm;
-import presentation.TabbedPaneForm;
+import presentation.*;
 
 import javax.swing.*;
 
 public class Controller {
     private static Person currentUser = null;
     private static JFrame windowFrame = null;
-//    private static String staffUsername = "cosmo.spacely";
-//    private static String staffPassword = "managerpassword";
-    // get currently logged in user (username/password hardcoded for now)
-    //private static final Person currentUser = Person.authenticateStaffUser(
-    //        staffUsername, staffPassword);
- ////   >>>>>>  tabbed_gui  // re-added in by Joseph
 
     public static void start() {
         // login form
@@ -35,13 +25,19 @@ public class Controller {
     }
 
     public static void showUI() {
-        windowFrame.getContentPane().removeAll();
-//        windowFrame.getContentPane().add(new NotificationLog().getRootPanel());
-//        windowFrame.pack();
-//        windowFrame.setLocationRelativeTo(null);
-//        windowFrame.setVisible(true);
+        // double checks to ensure setUser was called before this:
+        if (currentUser == null) {
+            JOptionPane.showMessageDialog(windowFrame.getRootPane(),
+                    "User was not authenticated!\n" +
+                            "Call setUser(user) BEFORE calling showUI()"
+                    ,"USER NOT LOGGED IN", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-        // Create a JFrame to show our form in, and display the UsersTableGUI form.
+        // TODO: clear the current login window
+        windowFrame.getContentPane().removeAll();
+
+        // Create a JFrame to show the tabbed GUI
         windowFrame = new JFrame("Panther Pantry Notification Manager");
         windowFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -58,7 +54,7 @@ public class Controller {
                         "Templates" +
                         "</td></tr></table></body></html>",
                 null,
-                null,
+                new ViewTemplatesForm().getRootPanel(),
                 "Create or edit notification templates");
         tabbedPane.addTab("<html><body><table><tr><td height='60'>" +
                         "View Notification Log" +
@@ -68,20 +64,13 @@ public class Controller {
                 "See old messages sent");
 
         showForm(tabbedPanel, windowFrame);
-
-
-        if (currentUser == null) {
-            JOptionPane.showMessageDialog(tabbedPanel.getRootPanel(), currentUser.getFirstName() + " failed authentication!\n" +
-                    "Check Database for record, and ensure username/passwords match!"
-                    ,"LOGIN ERROR", JOptionPane.ERROR_MESSAGE);
-        }
     }
 
     /**
      * authenticate user, save as Person variable
      * @param user the current user that is logging in
      */
-    public static void setPerson(Person user) {
+    public static void setUser(Person user) {
         currentUser = user;
     }
 

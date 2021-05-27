@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class LoginForm {
+public class LoginForm implements GUIForm{
     private JPanel rootPanel;
     private JTextField usernameField;
     private JTextField passwordField;
@@ -30,21 +30,20 @@ public class LoginForm {
                     Person currentUser = Person.authenticateStaffUser(username, password);
 
                     if(currentUser == null) {
-                        System.out.println("User not found, need an error dialog.");
-                    }
-                    if(currentUser != null) {
-                        System.out.println("User " + currentUser.getFirstName() + " logged in successfully.");
-                        Controller.setPerson(currentUser);
-                        Controller.showUI();
+                        JOptionPane.showMessageDialog(getRootPanel(),
+                                "Invalid username or password."
+                                ,"AUTHENTICATION ERROR", JOptionPane.ERROR_MESSAGE);
                     } else {
-                        System.out.println("Password incorrect, need an error dialog.");
+                        System.out.println("User " + currentUser.getFirstName() + " logged in successfully.");
+                        Controller.setUser(currentUser);
+                        Controller.showUI();
                     }
                 }
-
             }
         });
     }
 
+    @Override
     public JPanel getRootPanel() {
         return rootPanel;
     }
