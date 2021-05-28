@@ -1,6 +1,6 @@
 /*
 File Name: pantherPantry.css
-Last Edited: 05/05/2021
+Last Edited: 05/26/2021
 Author: Katie Pundt
  */
 
@@ -32,6 +32,7 @@ img {
 }
 
 h1 {
+    font-family: 'Open Sans', 'Helvetica', 'Arial',  sans-serif;
     font-weight: 400;
     font-size: 42px;
     background-color: #263c53;
@@ -40,6 +41,19 @@ h1 {
     text-align: center;
 }
 
+h2 {
+    font-family: 'Open Sans', 'Helvetica', 'Arial',  sans-serif;
+    font-weight: 400;
+    font-size: 28px;
+    margin: 10px 5px;
+    text-align: center;
+}
+
+h3 {
+    font-family: 'Open Sans', 'Helvetica', 'Arial',  sans-serif;
+    text-decoration: underline;
+    text-align: center;
+}
 nav {
     margin: 0 5px 10px 5px;
     text-align: center;
@@ -60,13 +74,7 @@ a:hover, a:visited {
     color: #70485b;
 }
 
-h2 {
-    font-family: 'Open Sans', 'Helvetica', 'Arial',  sans-serif;
-    font-weight: 400;
-    font-size: 28px;
-    margin: 10px 5px;
-    text-align: center;
-}
+
 p#pantryInfo {
     margin: 10px;
     text-align: left;
@@ -95,7 +103,7 @@ form {
     margin: 10px;
 }
 
-#formContents {
+#formContents, #preferences, #contactInfo {
     text-align: left;
     margin-left: 10px;
 }
@@ -118,13 +126,16 @@ input {
     border: solid #333333 1px;
 }
 
-#subscribeButton, #loginButton {
+#subscribeButton, #loginButton, #settingsButton {
     margin: 10px auto;
     display: block;
     background-color: #008099;
     color: #e9e9e9;
     font-size: 16px; /* larger button size for mobile devices*/
 }
+
+/*=== Settings ===*/
+
 
 /*===================
    RESPONSIVE STYLE
@@ -199,6 +210,16 @@ input {
 
     #formContents {
         text-align: right;
+        margin-right: 100px;
+    }
+
+    #preferences {
+        margin: 0 100px 0 100px;
+    }
+
+    #contactInfo {
+        text-align: right;
+        margin-right: 100px;
     }
 
     #errorMessages {
@@ -215,12 +236,11 @@ input {
 
     input {
         display: inline-block;
-        margin-right: 100px;
         background-color: #e9e9e9;
         border: solid #333333 1px;
     }
 
-    #subscribeButton, #loginButton {
+    #subscribeButton, #loginButton, #settingsButton {
         margin: 10px auto;
         display: block;
         background-color: #008099;
@@ -298,6 +318,7 @@ input {
 
     #formContents {
         text-align: right;
+        margin-right: 100px;
     }
 
     #errorMessages {
@@ -314,12 +335,21 @@ input {
 
     input {
         display: inline-block;
-        margin-right: 100px;
         background-color: #e9e9e9;
         border: solid #333333 1px;
     }
 
-    #subscribeButton, #loginButton {
+    #preferences {
+        grid-column: 1 / 3;
+        margin-left: 100px;
+    }
+
+    #contactInfo {
+        text-align: right;
+        margin-right: 100px;
+    }
+
+    #subscribeButton, #loginButton, #settingsButton {
         margin: 10px auto;
         display: block;
         background-color: #008099;

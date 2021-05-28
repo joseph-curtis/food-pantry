@@ -1,17 +1,18 @@
 <?php
 /*
 File Name: registerForm.php
-Last Edited: 04/27/2021
+Last Edited: 05/26/2021
 Author: Katie Pundt
 */
-
+require_once 'assets/utilities.php';
+require_secure();
 ?>
 <!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>PCC Food Pantry Registration</title>
+    <title>PCC Panther Pantry | Registration</title>
     <!-- Reset CSS -->
     <link href="assets/css/reset.css" rel="stylesheet">
     <!-- Google Fonts -->
@@ -68,8 +69,8 @@ Author: Katie Pundt
                     <input id="confirmPassword" name="confirmPassword" type="password" oninput="validatePasswordConfirm()" required><br>
 
                     <div id="result"></div>
-                    <input type="submit" id="subscribeButton" value="Submit" formtarget="_blank">
                 </div>
+                <input type="submit" id="subscribeButton" value="Submit">
             </form>
         </div>
     </div>

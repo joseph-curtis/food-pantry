@@ -1,16 +1,19 @@
 <?php
 /*
 File Name: loginForm.php
-Last Edited: 05/04/2021
+Last Edited: 05/26/2021
 Author: Katie Pundt
 */
+require_once 'assets/utilities.php';
+require_secure();
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Panther Pantry Account Login</title>
+    <title>PCC Panther Pantry | Account Login</title>
     <!-- Reset CSS -->
     <link href="assets/css/reset.css" rel="stylesheet">
     <!-- Google Fonts -->
@@ -36,9 +39,9 @@ Author: Katie Pundt
                 <label for="password">Password</label>
                 <input id="password" name="password" type="password" required><br>
                 <div id="result"></div>
-                <input type="submit" id="loginButton" value="Submit" formtarget="_blank">
                 <div id="result"></div>
             </div>
+            <input type="submit" id="loginButton" value="Submit">
         </form>
     </div>
 </body>

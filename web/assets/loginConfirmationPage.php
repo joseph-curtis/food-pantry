@@ -1,10 +1,13 @@
 <?php
 /*
 File Name: loginConfirmationPage.php
-Last Edited: 05/19/2021
+Last Edited: 05/27/2021
 Author: Katie Pundt
 */
 require_once 'Database.php';
+require_once 'utilities.php';
+require_secure();
+session_start();
 
 ?>
 
@@ -13,7 +16,7 @@ require_once 'Database.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Panther Pantry Login Confirmation</title>
+    <title>PCC Food Pantry | Login Confirmation</title>
     <!-- Reset CSS -->
     <link href="css/reset.css" rel="stylesheet">
     <!-- Google Fonts -->
@@ -26,6 +29,7 @@ require_once 'Database.php';
     <h1>Panther Pantry Login Confirmation</h1>
     <nav>
         <a href="../../web/pantryHome.html">Home</a>
+        <a href="../../web/loginForm.php">Login</a>
     </nav>
     <div id="wrapper">
         <p class="output"><?php
@@ -33,9 +37,10 @@ require_once 'Database.php';
             $password = $_POST["password"];
             $logged_in = Database::check_login($username, $password);
             if($logged_in) {
-                echo "Welcome back " . $username . "!";
+                $_SESSION["session_username"] = $_POST["username"];
+                header('Location: ' . 'settings.php');
             } else {
-                echo "Login failed.";
+                echo "Login failed. Please try again.";
             }
             ?></p>
     </div>

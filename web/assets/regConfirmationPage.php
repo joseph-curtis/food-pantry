@@ -1,19 +1,20 @@
 <?php
 /*
 File Name: regConfirmationPage.php
-Last Edited: 05/19/2021
+Last Edited: 05/26/2021
 Author: Katie Pundt
 */
 require_once 'User.php';
 require_once 'Database.php';
-
+require_once 'utilities.php';
+require_secure();
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>New Account Confirmation</title>
+    <title>PCC Food Pantry | New Account Confirmation</title>
     <!-- Reset CSS -->
     <link href="css/reset.css" rel="stylesheet">
     <!-- Google Fonts -->
