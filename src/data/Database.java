@@ -6,6 +6,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import static java.lang.System.exit;
 import logic.Person;
+import logic.Template;
 
 /**
  * Database class for the data layer. Note that there is only one database, so all the properties
@@ -48,7 +49,14 @@ public class Database {
     private static final String INSERT_RECIPIENTS
             = "INSERT INTO RECIPIENT (FK_ToPerson_ID, FK_Message_ID, to_email)" +
             " VALUES (?, ?, ?);";
-    private static final String GET_ID = "SELECT @@IDENTITY AS PK_Message_ID;";
+    private static final String GET_ID
+            = "SELECT @@IDENTITY AS PK_ID;";
+    private static final String GET_ALL_TEMPLATES
+            = "SELECT name, temp_subject, temp_body " +
+            " FROM TEMPLATE";
+    private static final String INSERT_TEMPLATE
+            = "INSERT INTO TEMPLATE (name, temp_subject, temp_body) " +
+            " VALUES (?, ?, ?);";
 
 
     // The one and only connection object
@@ -144,17 +152,11 @@ public class Database {
                         rs.getInt("PK_Person_ID"),
                         rs.getString("firstname"),
                         rs.getString("lastname"),
-                        rs.getString("email")));
+                        rs.getString("email")
+                ));
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            try {
-                if (!connection.isClosed()) {
-                    connection.close();
-                }
-            } catch (SQLException except) {
-                except.printStackTrace();
-            }
         } finally {
             // close off connection
             close();
@@ -181,6 +183,7 @@ public class Database {
             insertMessage.setString(3, textBody);
             insertMessage.executeUpdate();
 
+            // INSERT records into RECIPIANT table
             ResultSet rs = getMessageID.executeQuery();
             rs.next();
             messageID = rs.getInt(1);
@@ -215,38 +218,73 @@ public class Database {
         }
     }
 
-//    static public User login(String username, String password){
-//        User user = null;
-//        connect();
-//        try {
-//            PreparedStatement stmt = connection.prepareStatement(LOGIN_SQL);
-//            stmt.setString(1, username);
-//            stmt.setString(2, password);
-//            ResultSet rs = stmt.executeQuery();
-//            if(rs.next()) {
-//                user = new User(
-//                        rs.getInt("PK_Person_ID"),
-//                        rs.getString("username"),
-//                        rs.getString("password_hash"),
-//                        rs.getString("role"));
-//            }
-//        } catch (SQLException throwables) {
-//            throwables.printStackTrace();
-//        } finally {
-//            // close off connection
-//            close();
-//        }
-//        return user;
-//    }
-
+    /**
+     * helper class to close connection leak
+     */
     static public void close() {
         try {
             if (!connection.isClosed()) {
                 connection.close();
+                connection = null;
             }
-            connection = null;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        }
+    }
+
+    public static ArrayList<Template> getAllTemplatesList() {
+        ArrayList<Template> templateList = new ArrayList<>();
+        connect();
+
+        try {
+            PreparedStatement stmt = connection.prepareStatement(GET_ALL_TEMPLATES);
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()){
+                templateList.add(new Template(
+                        rs.getString("name"),
+                        rs.getString("temp_subject"),
+                        rs.getString("temp_body")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // close off connection
+            close();
+        }
+        return templateList;
+    }
+
+    public static void saveTemplate(String name, String temp_subject, String temp_body)
+            throws RuntimeException {
+        connect();
+
+        try (PreparedStatement saveTemplate = connection.prepareStatement(INSERT_TEMPLATE)) {
+
+            // start transaction
+            connection.setAutoCommit(false);
+
+            saveTemplate.setString(1, name);
+            saveTemplate.setString(2, temp_subject);
+            saveTemplate.setString(3, temp_body);
+            saveTemplate.executeUpdate();
+
+            // end transaction & commit
+            connection.commit();
+            System.out.println("Template saved successfully in the database.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                if (!connection.isClosed()) {
+                    connection.rollback();
+                }
+            } catch (SQLException except) {
+                except.printStackTrace();
+            }
+            throw new RuntimeException("Error writing to database: " + e);
+        } finally {
+            // close off connection
+            close();
         }
     }
 }
