@@ -52,7 +52,7 @@ public class Database {
     private static final String GET_ID
             = "SELECT @@IDENTITY AS PK_ID;";
     private static final String GET_ALL_TEMPLATES
-            = "SELECT name, temp_subject, temp_body " +
+            = "SELECT PK_Template_ID, name, temp_subject, temp_body " +
             " FROM TEMPLATE";
     private static final String INSERT_TEMPLATE
             = "INSERT INTO TEMPLATE (name, temp_subject, temp_body) " +
@@ -241,6 +241,7 @@ public class Database {
             ResultSet rs = stmt.executeQuery();
             while(rs.next()){
                 templateList.add(new Template(
+                        rs.getInt("PK_Template_ID"),
                         rs.getString("name"),
                         rs.getString("temp_subject"),
                         rs.getString("temp_body")

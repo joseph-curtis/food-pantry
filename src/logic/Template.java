@@ -10,14 +10,19 @@ import java.util.ArrayList;
  * @version 2021.05.28
  */
 public class Template {
+    private int template_id;
     private String name;
     private String subject;
     private String textBody;
 
-    public Template(String name, String subject, String textBody) {
+    public Template(int template_id, String name, String subject, String textBody) {
+        this.template_id = template_id;
         this.name = name;
         this.subject = subject;
         this.textBody = textBody;
+    }
+    public Template(String name, String subject, String textBody) {
+        new Template(-1, name, subject, textBody);
     }
 
     public static ArrayList<Template> getTemplatesList() {
