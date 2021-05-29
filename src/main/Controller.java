@@ -2,6 +2,11 @@ package main;
 
 import logic.Person;
 import presentation.*;
+import presentation.LoginForm;
+import presentation.NotificationLog;
+import presentation.GUIForm;
+import presentation.SendNotificationForm;
+import presentation.TabbedPaneForm;
 
 import javax.swing.*;
 
@@ -67,14 +72,6 @@ public class Controller {
     }
 
     /**
-     * authenticate user, save as Person variable
-     * @param user the current user that is logging in
-     */
-    public static void setUser(Person user) {
-        currentUser = user;
-    }
-
-    /**
      * Display the GUI interface
      * @param form to get the root panel
      * @param frame window to display
@@ -87,5 +84,13 @@ public class Controller {
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+    }
+
+    /**
+     * authenticate user, save as Person variable
+     * @param user the current user that is logging in
+     */
+    public static void setUser(Person user) {
+        currentUser = user;
     }
 }
