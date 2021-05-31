@@ -1,13 +1,13 @@
 <?php
 /*
 File Name: settings.php
-Last Edited: 05/27/2021
+Last Edited: 05/30/2021
 Author: Katie Pundt
 */
 require_once 'Database.php';
 require_once 'utilities.php';
+require_once 'User.php';
 require_secure();
-
 ?>
 <!doctype html>
 <html lang="en">
@@ -50,28 +50,23 @@ require_secure();
             <h3>Notification Preferences</h3>
 
             <div id="preferences">
-                <input type="radio" id="emailOnly" name="notifications" value="emailOnly">
-                <label for="emailOnly">Email only</label><br>
+                <input type="checkbox" id="receive_email" name="receive_email" value="receive_email" <?php Database::get_email_checkbox() ?>>
+                <label for="emailOnly">Email notifications</label><br>
 
-                <input type="radio" id="smsOnly" name="notifications" value="smsOnly">
-                <label for="smsOnly">SMS only</label><br>
+                <input type="checkbox" id="receive_sms" name="receive_sms" value="receive_sms" <?php Database::get_sms_checkbox() ?>>
+                <label for="smsOnly">SMS notifications</label><br>
 
-                <input type="radio" id="both" name="notifications" value="both">
-                <label for="both">Both SMS & email</label><br>
-
-                <input type="radio" id="optOut" name="notifications" value="optOut">
-                <label for="optOut">Opt out of notifications</label><br>
             </div><br>
 
             <h3>Update Contact Information</h3>
             <div id="contactInfo">
                 <label for="email">Email</label>
-                <input id="email" name="email" type="email" oninput="validateEmail(email);"><br>
+                <input id="email" name="email" type="email" oninput="validateEmail(email)" value="<?php Database::get_email()?>"><br>
 
                 <label for="cellPhone">Cell Phone</label>
-                <input id="cellPhone" name="cellPhone" type="tel" maxlength="10" oninput="validateCellPhone();"><br>
+                <input id="cellPhone" name="cellPhone" type="tel" maxlength="10" oninput="validateCellPhone()" value="<?php echo Database::get_phone()?>"><br>
 
-                <label for="password">Password</label>
+                <label for="password">Update Password</label>
                 <input id="password" name="password" type="password" oninput="validatePassword()"><br>
 
                 <label for="confirmPassword">Confirm Password</label>

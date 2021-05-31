@@ -1,7 +1,7 @@
 <?php
 /*
 File Name: Database.php
-Last Edited: 05/27/2021
+Last Edited: 05/30/2021
 Author: Katie Pundt
 */
 session_start();
@@ -15,16 +15,22 @@ class Database
     const DB_PASSWORD = "Cis234A_Team_JK_lOl_Spring_21_&(%";
 
     // SQL statements
-    const CREATE_NEW_ACCT_SQL = "INSERT INTO PERSON (firstname, lastname, username, password_hash, email, role, phone) VALUES (:firstname, :lastname, :username, (SELECT HASHBYTES('SHA2_256', CONVERT(NVARCHAR(MAX), :password))) , :email, 'Student', :phone)";
-    const GET_USERNAME_SQL = "SELECT * FROM PERSON WHERE username = :username";
-    const LOGIN_SQL = "SELECT username, password_hash FROM PERSON WHERE password_hash = HASHBYTES('SHA2_256', :password);";
-    const UPDATE_EMAIL_SQL = "UPDATE PERSON SET email = :email WHERE username = :session_username";
-    const UPDATE_CELL_PHONE_SQL = "UPDATE PERSON SET phone = :phone WHERE username = :session_username";
-    const UPDATE_PASSWORD_SQL = "UPDATE PERSON SET password_hash = (SELECT HASHBYTES('SHA2_256', CONVERT(NVARCHAR(MAX), :password))) WHERE username = :session_username";
-    const UPDATE_NOTIFICATION_EMAIL_SQL = "UPDATE SETTINGS SET email = 1, sms = 0, both = 0, opt_out = 0 FROM	SETTINGS JOIN PERSON ON SETTINGS.FK_Person_ID = PERSON.PK_Person_ID WHERE username = :session_username";
-    const UPDATE_NOTIFICATION_SMS_SQL = "UPDATE SETTINGS SET email = 0, sms = 1, both = 0, opt_out = 0 FROM	SETTINGS JOIN PERSON ON SETTINGS.FK_Person_ID = PERSON.PK_Person_ID WHERE username = :session_username";
-    const UPDATE_NOTIFICATION_BOTH_SQL = "UPDATE SETTINGS SET email = 0, sms = 0, both = 1, opt_out = 0 FROM	SETTINGS JOIN PERSON ON SETTINGS.FK_Person_ID = PERSON.PK_Person_ID WHERE username = :session_username";
-    const UPDATE_NOTIFICATION_OPT_OUT_SQL = "UPDATE SETTINGS SET email = 0, sms = 0, both = 0, opt_out = 1 FROM	SETTINGS JOIN PERSON ON SETTINGS.FK_Person_ID = PERSON.PK_Person_ID WHERE username = :session_username";
+    const CREATE_NEW_ACCT_SQL = "INSERT INTO PERSON (firstname, lastname, username, password_hash, email, role, phone, activated, receive_email, receive_sms) VALUES (:firstname, :lastname, :username, (SELECT HASHBYTES('SHA2_256', CONVERT(NVARCHAR(MAX), :password))) , :email, 'Student', :phone, 0, 1, :receive_sms);";
+    const GET_USERNAME_SQL = "SELECT * FROM PERSON WHERE username = :username;";
+    const GET_EMAIL_SQL = "SELECT email FROM PERSON WHERE username = :session_username;";
+    const GET_PHONE_SQL = "SELECT phone FROM PERSON WHERE username = :session_username;";
+    const GET_EMAIL_CHECKBOX_SQL = "SELECT receive_email FROM PERSON WHERE username = :session_username;";
+    const GET_SMS_CHECKBOX_SQL = "SELECT receive_sms FROM PERSON WHERE username = :session_username;";
+    const LOGIN_SQL = "SELECT * FROM PERSON WHERE password_hash = HASHBYTES('SHA2_256', :password);";
+    const UPDATE_EMAIL_SQL = "UPDATE PERSON SET email = :email WHERE username = :session_username;";
+    const UPDATE_CELL_PHONE_SQL = "UPDATE PERSON SET phone = :phone WHERE username = :session_username;";
+    const REMOVE_CELL_PHONE_SQL = "UPDATE PERSON SET phone = NULL WHERE username = :session_username;";
+    const UPDATE_PASSWORD_SQL = "UPDATE PERSON SET password_hash = (SELECT HASHBYTES('SHA2_256', CONVERT(NVARCHAR(MAX), :password))) WHERE username = :session_username;";
+    const UPDATE_NOTIFICATION_EMAIL_SQL = "UPDATE PERSON SET receive_email = 1, receive_sms = 0 WHERE username = :session_username;";
+    const UPDATE_NOTIFICATION_SMS_SQL = "UPDATE PERSON SET receive_email = 0, receive_sms = 1 WHERE username = :session_username;";
+    const UPDATE_NOTIFICATION_BOTH_SQL = "UPDATE PERSON SET receive_email = 1, receive_sms = 1 WHERE username = :session_username;";
+    const UPDATE_NOTIFICATION_OPT_OUT_SQL = "UPDATE PERSON SET receive_email = 0, receive_sms = 0 WHERE username = :session_username;";
+
 
     private static $db = NULL;
 
@@ -38,7 +44,7 @@ class Database
     }
 
     // create new account
-    public static function create_account($firstName, $lastName, $username, $password, $email, $cellPhone)
+    public static function create_account($firstName, $lastName, $username, $password, $email, $cellPhone, $receive_sms)
     {
         Database::connect();
         // prepare query
@@ -51,14 +57,17 @@ class Database
             ":username" => $username,
             ":password" => $password,
             ":email" => $email,
-            ":phone" => $cellPhone
+            ":phone" => $cellPhone,
+            ":receive_sms" => $receive_sms
         ]);
+
 
         $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $usersList =[];
         foreach ($users as $user) {
             $usersList[] = new User($user);
         }
+
         return $usersList;
 
     }
@@ -163,14 +172,18 @@ class Database
     {
         Database::connect();
 
-        // prepare query
-        $stmt = Database::$db->prepare(Database::UPDATE_EMAIL_SQL);
+        if (!empty($_POST["email"])) {
+            // prepare query
+            $stmt = Database::$db->prepare(Database::UPDATE_EMAIL_SQL);
 
-        // set parameters and execute
-        $stmt->execute([
-            ":email" => $email,
-            ":session_username" => $_SESSION["session_username"]
-        ]);
+            // set parameters and execute
+            $stmt->execute([
+                ":email" => $email,
+                ":session_username" => $_SESSION["session_username"]
+            ]);
+        }
+        return $email;
+
     }
 
     // update cell phone number
@@ -178,67 +191,103 @@ class Database
     {
         Database::connect();
 
-        // prepare query
         $stmt = Database::$db->prepare(Database::UPDATE_CELL_PHONE_SQL);
 
+        if ($cellPhone == FALSE) {
+            $cellPhone = NULL;
+        }
+
         $stmt->execute([
-            ":phone" => $cellPhone,
-            ":session_username" => $_SESSION["session_username"]
+        ":phone" => $cellPhone,
+        ":session_username" => $_SESSION["session_username"]
         ]);
 
-
+        return $cellPhone;
     }
 
     // update password
     public static function update_password($password)
     {
         Database::connect();
+        if ((isset($_POST["password"])) && $_POST["password"] == $_POST["confirmPassword"]) {
+            // prepare query
+            $stmt = Database::$db->prepare(Database::UPDATE_PASSWORD_SQL);
 
-        // prepare query
-        $stmt = Database::$db->prepare(Database::UPDATE_PASSWORD_SQL);
-
-        // set parameters and execute
-        $stmt->execute([
-            ":password" => $password,
-            ":session_username" => $_SESSION["session_username"]
-        ]);
+            // set parameters and execute
+            $stmt->execute([
+                ":password" => $password,
+                ":session_username" => $_SESSION["session_username"]
+            ]);
+        }
     }
 
     // update preferences
     public static function update_preferences()
     {
-        $radioVal = $_POST['notifications'];
-
-        if($radioVal == 'emailOnly') {
+        if (!empty($_POST['receive_email'])) {
             Database::email_notification();
-        } elseif ($radioVal == 'smsOnly') {
+        }
+        if (!empty($_POST['receive_sms']))  {
             Database::sms_notification();
-        } elseif ($radioVal == 'both') {
+        }
+        if (!empty($_POST['receive_email']) && (!empty($_POST['receive_sms']))) {
             Database::both_notification();
-        } elseif ($radioVal == 'optOut') {
+        }
+        if (empty($_POST['receive_email']) && (empty($_POST['receive_sms']))) {
             Database::opt_out();
+        }
+    }
+
+    public static function get_email() {
+        Database::connect();
+
+        $stmt = Database::$db->prepare(Database::GET_EMAIL_SQL);
+        $stmt->execute([":session_username" => $_SESSION["session_username"]]);
+        $results = $stmt->fetch(PDO::FETCH_OBJ);
+        print $results->email;
+
+    }
+
+    public static function get_phone() {
+        Database::connect();
+
+        $stmt = Database::$db->prepare(Database::GET_PHONE_SQL);
+        $stmt->execute([":session_username" => $_SESSION["session_username"]]);
+        $results = $stmt->fetch(PDO::FETCH_OBJ);
+        print $results->phone;
+
+    }
+
+    public static function get_email_checkbox() {
+        Database::connect();
+
+        $stmt = Database::$db->prepare(Database::GET_EMAIL_CHECKBOX_SQL);
+        $stmt->execute([":session_username" => $_SESSION["session_username"]]);
+        $results = $stmt->fetch(PDO::FETCH_OBJ);
+
+        if ($results->receive_email == 1) {
+            print 'checked';
         } else {
-            exit();
+            print '';
         }
 
     }
 
-    // update contact info
-    public static function update_contact_info()
-    {
-        $email = $_POST["email"];
-        $cellPhone = $_POST["cellPhone"];
-        $password = $_POST["password"];
+    public static function get_sms_checkbox() {
+        Database::connect();
 
-        if (!empty($_POST["email"])) {
-            Database::update_email($email);
-        } if (!empty($_POST["cellPhone"])) {
-        Database::update_phone($cellPhone);
-        } if (!empty($_POST["password"]) && !empty($_POST["passwordConfirm"])) {
-            Database::update_password($password);
+        $stmt = Database::$db->prepare(Database::GET_SMS_CHECKBOX_SQL);
+        $stmt->execute([":session_username" => $_SESSION["session_username"]]);
+        $results = $stmt->fetch(PDO::FETCH_OBJ);
+
+        if ($results->receive_sms == 1) {
+            print 'checked';
         } else {
-            exit();
+            print '';
         }
+
     }
+
+
 
 }

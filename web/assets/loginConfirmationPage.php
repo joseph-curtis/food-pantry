@@ -1,13 +1,12 @@
 <?php
 /*
 File Name: loginConfirmationPage.php
-Last Edited: 05/27/2021
+Last Edited: 05/30/2021
 Author: Katie Pundt
 */
 require_once 'Database.php';
 require_once 'utilities.php';
 require_secure();
-session_start();
 
 ?>
 
@@ -35,10 +34,10 @@ session_start();
         <p class="output"><?php
             $username = $_POST["username"];
             $password = $_POST["password"];
-            $logged_in = Database::check_login($username, $password);
+            $logged_in = Database::check_login($username, $password,);
             if($logged_in) {
-                $_SESSION["session_username"] = $_POST["username"];
                 header('Location: ' . 'settings.php');
+                $_SESSION["session_username"] = $username;
             } else {
                 echo "Login failed. Please try again.";
             }

@@ -1,7 +1,7 @@
 <?php
 /*
 File Name: settingsConfirmationPage.php
-Last Edited: 05/27/2021
+Last Edited: 05/30/2021
 Author: Katie Pundt
 */
 require_once 'Database.php';
@@ -31,18 +31,21 @@ require_secure();
 </nav>
 <div id="wrapper">
     <p class="output"><?php
-        echo 'Your settings have been updated!';
 
-        // if a notifications radio button is selected, update the database
-        if (isset($_POST['notifications'])) {
-            Database::update_preferences();
-        } elseif (!empty($_POST["email"]) || (!empty($_POST["cellPhone"])) || (!empty($_POST["password"]))) {
-            Database::update_contact_info();
+        $email = $_POST["email"];
+        $cellPhone = $_POST["cellPhone"];
+        $password = $_POST["password"];
+        $confirmPassword = $_POST["confirmPassword"];
+        // update settings
+        Database::update_preferences();
+        Database::update_email($email);
+        Database::update_phone($cellPhone);
+        if ($_POST["password"] != $_POST["confirmPassword"]) {
+            echo 'Passwords must match!';
         } else {
-            exit();
+            Database::update_password($password);
+            echo 'Your settings have been updated!';
         }
-
-
         ?></>
 </div>
 </body>

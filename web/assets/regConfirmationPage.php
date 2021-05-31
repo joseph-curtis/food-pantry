@@ -1,13 +1,14 @@
 <?php
 /*
 File Name: regConfirmationPage.php
-Last Edited: 05/26/2021
+Last Edited: 05/30/2021
 Author: Katie Pundt
 */
 require_once 'User.php';
 require_once 'Database.php';
 require_once 'utilities.php';
 require_secure();
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -42,7 +43,14 @@ require_secure();
         if($account_exists) {
             echo "An account with that username already exists. Please login or try again.";
         } else {
-            Database::create_account($firstName, $lastName, $username, $password, $email, $cellPhone);
+            if($cellPhone == TRUE) {
+                $receive_sms = 1;
+            }
+            else {
+                $receive_sms = 0;
+                $cellPhone = NULL;
+            }
+            Database::create_account($firstName, $lastName, $username, $password, $email, $cellPhone, $receive_sms);
             echo "Thank you " . $firstName . " " . $lastName . " for registering for the PCC Panther Pantry!"
                 . "<br>" . "A confirmation email has been sent to " . $email . ". "
                 . "<br>" ."You will begin receiving food pantry notifications within 24 hours.";
