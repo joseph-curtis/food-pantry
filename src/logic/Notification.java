@@ -94,6 +94,14 @@ public class Notification {
         }
     }
 
+    public void sendSMS(){
+        for(Person person : studentList){
+            if(person.isActivated()  && person.isReceiveSMS()){
+                SMS.sendMessage(person.getPhone(), textBody);
+            }
+        }
+    }
+
     public void saveMessage() throws RuntimeException {
         Database.saveMessage(fromPerson.getID(), studentList, subject, textBody);
     }

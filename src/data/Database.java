@@ -6,6 +6,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import static java.lang.System.exit;
 import logic.Person;
+import logic.Template;
 
 /**
  * Database class for the data layer. Note that there is only one database, so all the properties
@@ -39,9 +40,9 @@ public class Database {
             "GROUP BY PK_Message_ID, subject, textbody, datetime, firstname, lastname\n" +
             "ORDER BY datetime DESC;";
     private static final String GET_ALL_STUDENTS
-            = "SELECT PK_Person_ID, firstname, lastname, email" +
-            " FROM PERSON" +
-            " WHERE role = 'Student'";
+            = "SELECT PK_Person_ID, firstname, lastname, email, phone, activated, receive_email, receive_sms" +
+            " FROM PERSON " +
+            " WHERE role = 'Student';";
     private static final String INSERT_MESSAGE
             = "INSERT INTO MESSAGE (FK_FromPerson_ID, subject, textbody, datetime)" +
             " VALUES (?, ?, ?, CAST(GETDATE() AS smalldatetime));";
@@ -49,6 +50,12 @@ public class Database {
             = "INSERT INTO RECIPIENT (FK_ToPerson_ID, FK_Message_ID, to_email)" +
             " VALUES (?, ?, ?);";
     private static final String GET_ID = "SELECT @@IDENTITY AS PK_Message_ID;";
+    private static final String GET_ALL_TEMPLATES
+            = "SELECT PK_Template_ID, name, temp_subject, temp_body " +
+            " FROM TEMPLATE";
+    private static final String INSERT_TEMPLATE
+            = "INSERT INTO TEMPLATE (name, temp_subject, temp_body) " +
+            " VALUES (?, ?, ?);";
 
 
     // The one and only connection object
@@ -104,14 +111,15 @@ public class Database {
         return messages;
     }
 
-    public static Person login(String username, String password) {
+    public static Person login(String username, char[] password) {
         Person currentUser = null;
         connect();
 
         try {
             PreparedStatement stmt = connection.prepareStatement(LOGIN_SQL);
             stmt.setString(1, username);
-            stmt.setString(2, password);
+            //System.out.println(password);
+            stmt.setString(2,  String.valueOf(password));
             ResultSet rs = stmt.executeQuery();
 
             rs.next();
@@ -144,7 +152,11 @@ public class Database {
                         rs.getInt("PK_Person_ID"),
                         rs.getString("firstname"),
                         rs.getString("lastname"),
-                        rs.getString("email")));
+                        rs.getString("email"),
+                        rs.getString("phone"),
+                        rs.getBoolean("activated"),
+                        rs.getBoolean("receive_email"),
+                        rs.getBoolean("receive_sms")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -215,29 +227,62 @@ public class Database {
         }
     }
 
-//    static public User login(String username, String password){
-//        User user = null;
-//        connect();
-//        try {
-//            PreparedStatement stmt = connection.prepareStatement(LOGIN_SQL);
-//            stmt.setString(1, username);
-//            stmt.setString(2, password);
-//            ResultSet rs = stmt.executeQuery();
-//            if(rs.next()) {
-//                user = new User(
-//                        rs.getInt("PK_Person_ID"),
-//                        rs.getString("username"),
-//                        rs.getString("password_hash"),
-//                        rs.getString("role"));
-//            }
-//        } catch (SQLException throwables) {
-//            throwables.printStackTrace();
-//        } finally {
-//            // close off connection
-//            close();
-//        }
-//        return user;
-//    }
+    public static ArrayList<Template> getAllTemplatesList() {
+        ArrayList<Template> templateList = new ArrayList<>();
+        connect();
+
+        try {
+            PreparedStatement stmt = connection.prepareStatement(GET_ALL_TEMPLATES);
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()){
+                templateList.add(new Template(
+                        rs.getInt("PK_Template_ID"),
+                        rs.getString("name"),
+                        rs.getString("temp_subject"),
+                        rs.getString("temp_body")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // close off connection
+            close();
+        }
+        return templateList;
+    }
+
+    public static void saveTemplate(String name, String temp_subject, String temp_body)
+            throws RuntimeException {
+        connect();
+
+        try (PreparedStatement saveTemplate = connection.prepareStatement(INSERT_TEMPLATE)) {
+
+            // start transaction
+            connection.setAutoCommit(false);
+
+            saveTemplate.setString(1, name);
+            saveTemplate.setString(2, temp_subject);
+            saveTemplate.setString(3, temp_body);
+            saveTemplate.executeUpdate();
+
+            // end transaction & commit
+            connection.commit();
+            System.out.println("Template saved successfully in the database.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                if (!connection.isClosed()) {
+                    connection.rollback();
+                }
+            } catch (SQLException except) {
+                except.printStackTrace();
+            }
+            throw new RuntimeException("Error writing to database: " + e);
+        } finally {
+            // close off connection
+            close();
+        }
+    }
 
     static public void close() {
         try {
