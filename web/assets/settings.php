@@ -8,6 +8,7 @@ require_once 'Database.php';
 require_once 'utilities.php';
 require_once 'User.php';
 require_secure();
+
 ?>
 <!doctype html>
 <html lang="en">

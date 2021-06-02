@@ -1,13 +1,12 @@
 <?php
 /*
 File Name: loginConfirmationPage.php
-Last Edited: 05/30/2021
+Last Edited: 06/01/2021
 Author: Katie Pundt
 */
 require_once 'Database.php';
 require_once 'utilities.php';
 require_secure();
-
 ?>
 
 <!DOCTYPE html>
@@ -34,12 +33,21 @@ require_secure();
         <p class="output"><?php
             $username = $_POST["username"];
             $password = $_POST["password"];
+            $_SESSION["session_username"] = $username;
             $logged_in = Database::check_login($username, $password,);
-            if($logged_in) {
-                header('Location: ' . 'settings.php');
-                $_SESSION["session_username"] = $username;
-            } else {
+
+            if ($logged_in == FALSE) {
                 echo "Login failed. Please try again.";
+                exit();
+            }
+
+            $activated = Database::get_activated_status();
+            if($activated == 1 && $logged_in) {
+                header('Location: ' . 'settings.php');
+            } elseif ($activated == 0 && $logged_in) {
+                echo "Please activate your account.";
+            } else {
+                return FALSE;
             }
             ?></p>
     </div>

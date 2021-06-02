@@ -42,10 +42,13 @@ require_secure();
         Database::update_phone($cellPhone);
         if ($_POST["password"] != $_POST["confirmPassword"]) {
             echo 'Passwords must match!';
+        } elseif (empty($_POST["email"])) {
+            echo 'Sorry! Cannot delete an email address.';
         } else {
             Database::update_password($password);
             echo 'Your settings have been updated!';
         }
+
         ?></>
 </div>
 </body>

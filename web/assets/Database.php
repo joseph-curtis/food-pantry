@@ -1,7 +1,7 @@
 <?php
 /*
 File Name: Database.php
-Last Edited: 05/30/2021
+Last Edited: 06/01/2021
 Author: Katie Pundt
 */
 session_start();
@@ -24,12 +24,13 @@ class Database
     const LOGIN_SQL = "SELECT * FROM PERSON WHERE password_hash = HASHBYTES('SHA2_256', :password);";
     const UPDATE_EMAIL_SQL = "UPDATE PERSON SET email = :email WHERE username = :session_username;";
     const UPDATE_CELL_PHONE_SQL = "UPDATE PERSON SET phone = :phone WHERE username = :session_username;";
-    const REMOVE_CELL_PHONE_SQL = "UPDATE PERSON SET phone = NULL WHERE username = :session_username;";
     const UPDATE_PASSWORD_SQL = "UPDATE PERSON SET password_hash = (SELECT HASHBYTES('SHA2_256', CONVERT(NVARCHAR(MAX), :password))) WHERE username = :session_username;";
     const UPDATE_NOTIFICATION_EMAIL_SQL = "UPDATE PERSON SET receive_email = 1, receive_sms = 0 WHERE username = :session_username;";
     const UPDATE_NOTIFICATION_SMS_SQL = "UPDATE PERSON SET receive_email = 0, receive_sms = 1 WHERE username = :session_username;";
     const UPDATE_NOTIFICATION_BOTH_SQL = "UPDATE PERSON SET receive_email = 1, receive_sms = 1 WHERE username = :session_username;";
     const UPDATE_NOTIFICATION_OPT_OUT_SQL = "UPDATE PERSON SET receive_email = 0, receive_sms = 0 WHERE username = :session_username;";
+    const UPDATE_ACTIVATED_SQL = "UPDATE PERSON SET activated = 1 WHERE username = :session_username;";
+    const GET_ACTIVATED_STATUS_SQL = "SELECT activated FROM PERSON WHERE username = :session_username";
 
 
     private static $db = NULL;
@@ -61,7 +62,7 @@ class Database
             ":receive_sms" => $receive_sms
         ]);
 
-
+        // fetch results
         $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $usersList =[];
         foreach ($users as $user) {
@@ -80,6 +81,8 @@ class Database
         // prepare and execute query
         $stmt = Database::$db->prepare(Database::GET_USERNAME_SQL);
         $stmt->execute([":username" => $username]);
+
+        // fetch results
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         foreach ($results as $res) {
@@ -191,6 +194,7 @@ class Database
     {
         Database::connect();
 
+        // prepare query
         $stmt = Database::$db->prepare(Database::UPDATE_CELL_PHONE_SQL);
 
         if ($cellPhone == FALSE) {
@@ -209,7 +213,8 @@ class Database
     public static function update_password($password)
     {
         Database::connect();
-        if ((isset($_POST["password"])) && $_POST["password"] == $_POST["confirmPassword"]) {
+
+        if ((!empty($_POST["password"])) && $_POST["password"] == $_POST["confirmPassword"]) {
             // prepare query
             $stmt = Database::$db->prepare(Database::UPDATE_PASSWORD_SQL);
 
@@ -238,31 +243,49 @@ class Database
         }
     }
 
-    public static function get_email() {
+    public static function get_email()
+    {
         Database::connect();
 
+        // prepare query
         $stmt = Database::$db->prepare(Database::GET_EMAIL_SQL);
+
+        // set parameters and execute
         $stmt->execute([":session_username" => $_SESSION["session_username"]]);
+
+        // fetch results
         $results = $stmt->fetch(PDO::FETCH_OBJ);
         print $results->email;
 
     }
 
-    public static function get_phone() {
+    public static function get_phone()
+    {
         Database::connect();
 
+        // prepare query
         $stmt = Database::$db->prepare(Database::GET_PHONE_SQL);
+
+        // set parameters and execute
         $stmt->execute([":session_username" => $_SESSION["session_username"]]);
+
+        // fetch results
         $results = $stmt->fetch(PDO::FETCH_OBJ);
         print $results->phone;
 
     }
 
-    public static function get_email_checkbox() {
+    public static function get_email_checkbox()
+    {
         Database::connect();
 
+        // prepare query
         $stmt = Database::$db->prepare(Database::GET_EMAIL_CHECKBOX_SQL);
+
+        // set parameters and execute
         $stmt->execute([":session_username" => $_SESSION["session_username"]]);
+
+        // fetch results
         $results = $stmt->fetch(PDO::FETCH_OBJ);
 
         if ($results->receive_email == 1) {
@@ -273,11 +296,17 @@ class Database
 
     }
 
-    public static function get_sms_checkbox() {
+    public static function get_sms_checkbox()
+    {
         Database::connect();
 
+        // prepare query
         $stmt = Database::$db->prepare(Database::GET_SMS_CHECKBOX_SQL);
+
+        // set parameters and execute
         $stmt->execute([":session_username" => $_SESSION["session_username"]]);
+
+        // fetch results
         $results = $stmt->fetch(PDO::FETCH_OBJ);
 
         if ($results->receive_sms == 1) {
@@ -288,6 +317,39 @@ class Database
 
     }
 
+    // update activation status
+    public static function update_activated()
+    {
+        Database::connect();
 
+        // prepare query
+        $stmt = Database::$db->prepare(Database::UPDATE_ACTIVATED_SQL);
+
+        // set parameters and execute
+        $stmt->execute([":session_username" => $_SESSION["session_username"]]);
+
+    }
+
+    // get activation status
+    public static function get_activated_status()
+    {
+        Database::connect();
+
+        // prepare query
+        $stmt = Database::$db->prepare(Database::GET_ACTIVATED_STATUS_SQL);
+
+        // set parameters and execute
+        $stmt->execute([":session_username" => $_SESSION["session_username"]]);
+
+        // fetch results
+        $results = $stmt->fetch(PDO::FETCH_OBJ);
+
+        if ($results->activated == 1) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+
+    }
 
 }

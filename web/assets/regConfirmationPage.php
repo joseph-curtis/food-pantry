@@ -46,15 +46,13 @@ require_secure();
         } else {
             if($cellPhone == TRUE) {
                 $receive_sms = 1;
-            }
-            else {
+            } else {
                 $receive_sms = 0;
                 $cellPhone = NULL;
             }
             Database::create_account($firstName, $lastName, $username, $password, $email, $cellPhone, $receive_sms);
-            $message = new Email($email, Email::SUBJECT, Email::BODY);
-            $message->send();
-
+            $_SESSION["session_username"] = $username;
+            Email::send_verification();
             echo "Thank you " . $firstName . " " . $lastName . " for registering for the PCC Panther Pantry!"
                 . "<br>" . "An activation email has been sent to " . $email . ". ";
         }

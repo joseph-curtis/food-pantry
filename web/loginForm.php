@@ -32,7 +32,7 @@ require_secure();
     <div id="wrapper">
         <h2>Login</h2>
     <div id="formWrapper">
-        <form method="post" action="../web/assets/loginConfirmationPage.php">
+        <form method="POST" action="../web/assets/loginConfirmationPage.php">
             <div id="formContents">
                 <label for="username">Username</label>
                 <input id="username" name="username" type="text" required><br>

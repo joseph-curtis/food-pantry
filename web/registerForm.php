@@ -35,7 +35,7 @@ require_secure();
         <p id="register">If you would like to sign up to receive notifications from the PCC Panther Pantry please create an
             account by filling out the form below.</p>
         <div id="formWrapper">
-            <form method="post" action="../web/assets/regConfirmationPage.php">
+            <form method="POST" action="../web/assets/regConfirmationPage.php">
                 <div id="errorMessages">
                     <span id="firstNameMessage"></span>
                     <span id="lastNameMessage"></span>
