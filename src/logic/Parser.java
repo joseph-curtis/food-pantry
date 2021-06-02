@@ -16,13 +16,10 @@ public class Parser {
                 tags.add(matcher.group());
             }
         }
-        //System.out.println(tags);
-       // msgBody.matches(pattern);
         return tags;
     }
 
-    public static String setUpTagFields(ArrayList<String> tags, String msgBody){
-        //ArrayList<String> tags = Parser.parseTags(msgBody);
+    public static String tagFields(ArrayList<String> tags, String msgBody){
         ArrayList<LabelTextFieldContainer> fields = new ArrayList<>();
         JPanel tagPanel = new JPanel();
         for(String tag : tags){
@@ -35,11 +32,10 @@ public class Parser {
             tagPanel.add(field.textField);
         }
         int result = JOptionPane.showConfirmDialog(null, tagPanel,
-                "Please Enter Tag Values", JOptionPane.OK_CANCEL_OPTION);
+                "Please Enter Text to Replace Tags", JOptionPane.OK_CANCEL_OPTION);
         if(result == JOptionPane.OK_OPTION){
             for(LabelTextFieldContainer field : fields){
                 msgBody = msgBody.replace(field.getLabel().getText(), field.getTextField().getText());
-                //System.out.println(tag + " " + tags.get(tag).getText());
             }
         }
 

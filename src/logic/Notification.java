@@ -40,9 +40,6 @@ public class Notification {
      * @return true if email sent successfully
      */
     public boolean sendEmail() throws RuntimeException {
-        //String signedTextBody = textBody + "<p>From:<br/>"
-        //        + fromPerson.getFirstName() + ' ' + fromPerson.getLastName() + "</p>";
-
         return sendEmail(fromPerson.getEmail(), sendToEmailString, subject, textBody);
     }
 

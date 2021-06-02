@@ -13,7 +13,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * UI to send notifications to subscribers
@@ -119,7 +118,7 @@ public class SendNotificationForm implements GUIForm {
 
                     ArrayList<String>  tags = Parser.parseTags(templates.get(index-1).getTextBody());
 
-                    bodyTextArea.setText(Parser.setUpTagFields(tags, templates.get(index-1).getTextBody()));
+                    bodyTextArea.setText(Parser.tagFields(tags, templates.get(index-1).getTextBody()));
                 }
             }
         });

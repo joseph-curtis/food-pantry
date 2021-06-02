@@ -18,7 +18,7 @@ public class SMS {
     public static void sendMessage(String toPerson, String msgBody ){
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
         Message.creator(
-                new com.twilio.type.PhoneNumber("9257681212"),
+                new com.twilio.type.PhoneNumber(toPerson),
                 new com.twilio.type.PhoneNumber("+12027598758"),
                 msgBody)
                 .create();
