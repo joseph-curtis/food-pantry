@@ -43,7 +43,7 @@ public class ViewTemplatesForm extends DefaultTableModel implements GUIForm {
         });
 
         editTemplateButton.addActionListener(event -> {
-            editorWindow = new JFrame("Edit Template");
+            editorWindow = new JFrame("Template Editor");
 
             // get selected row index
             int row = templatesTable.getSelectedRow();

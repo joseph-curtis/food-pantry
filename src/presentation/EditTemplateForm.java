@@ -25,6 +25,19 @@ public class EditTemplateForm extends Component implements GUIForm{
     private JPanel buttonsPanel;
     private JTextField nameTextField;
     private JLabel nameLabel;
+    private JButton tagButton;
+
+    public EditTemplateForm() {
+        rootPanel.setPreferredSize(new Dimension(400, 500));
+
+        // button event handlers
+        tagButton.addActionListener(event -> {
+            // replace selected text with a tag
+            String selection = bodyTextArea.getSelectedText();
+            if (selection == null) selection = "";
+            bodyTextArea.replaceSelection("{" + selection + "}");
+        });
+    }
 
     /**
      * Edit an existing template
@@ -32,8 +45,8 @@ public class EditTemplateForm extends Component implements GUIForm{
      * @param template existing template to edit
      */
     public EditTemplateForm(JFrame windowFrame, Template template) {
+        this();  // calls constructor for shared properties
         titleLabel.setText("Edit Template");
-        rootPanel.setPreferredSize(new Dimension(400, 500));
 
         // set fields to existing data
         nameTextField.setText(template.getName());
@@ -41,6 +54,11 @@ public class EditTemplateForm extends Component implements GUIForm{
         bodyTextArea.setText(template.getTextBody());
 
         // button event handlers
+
+        cancelButton.addActionListener(event -> {
+            windowFrame.dispose();
+        });
+
         cancelButton.addActionListener(event -> {
             windowFrame.dispose();
         });
@@ -63,8 +81,8 @@ public class EditTemplateForm extends Component implements GUIForm{
      * @param windowFrame the JFrame this is attached to
      */
     public EditTemplateForm(JFrame windowFrame) {
+        this();  // calls constructor for shared properties
         titleLabel.setText("Create New Template");
-        rootPanel.setPreferredSize(new Dimension(400, 500));
 
         // button event handlers
         cancelButton.addActionListener(event -> {
