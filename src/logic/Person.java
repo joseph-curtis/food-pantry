@@ -16,6 +16,15 @@ public class Person {
     private String role;
     private String email;
 
+    /**
+     * Constructor for User logged in (staff member)
+     * @param person_id
+     * @param firstName
+     * @param lastName
+     * @param username
+     * @param role
+     * @param email
+     */
     public Person(Integer person_id
             , String firstName
             , String lastName
@@ -30,6 +39,13 @@ public class Person {
         this.email = email;
     }
 
+    /**
+     * Constructor for student subscribers
+     * @param person_id
+     * @param firstName
+     * @param lastName
+     * @param email
+     */
     public Person (Integer person_id, String firstName, String lastName, String email) {
         this.person_id = person_id;
         this.firstName = firstName;
@@ -68,6 +84,10 @@ public class Person {
     }
     public String toEmailString() {
         return firstName + ' ' + lastName + " <" + email + ">";
+    }
+
+    public String getRole() {
+        return role;
     }
 
     @Override

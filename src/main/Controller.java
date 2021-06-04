@@ -9,18 +9,31 @@ import presentation.SendNotificationForm;
 import presentation.TabbedPaneForm;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class Controller {
     private static Person currentUser = null;
     private static JFrame windowFrame = null;
 
+    private static TabbedPaneForm tabbedPanel = new TabbedPaneForm();
+    private static JTabbedPane tabbedPane = tabbedPanel.getTabbedPane();
+    private static ViewTemplatesForm templatesTab = new ViewTemplatesForm();
+
     public static void start() {
         // login form
         windowFrame = new JFrame("Staff User Login");
         windowFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        showLogin();
+        showForm(new LoginForm(), windowFrame);
     }
 
+    /**
+     * clears the current window shown
+     */
+    public static void close() {
+        windowFrame.dispose();
+    }
+
+    @Deprecated
     public static void showLogin() {
         windowFrame.getContentPane().removeAll();
         windowFrame.getContentPane().add(new LoginForm().getRootPanel());
@@ -38,16 +51,11 @@ public class Controller {
                     ,"USER NOT LOGGED IN", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
-        // TODO: clear the current login window
         windowFrame.getContentPane().removeAll();
 
         // Create a JFrame to show the tabbed GUI
         windowFrame = new JFrame("Panther Pantry Notification Manager");
         windowFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        TabbedPaneForm tabbedPanel = new TabbedPaneForm();
-        JTabbedPane tabbedPane = tabbedPanel.getTabbedPane();
 
         tabbedPane.addTab("<html><body><table><tr><td height='60'>" +
                         "Send Notification" +
@@ -55,18 +63,25 @@ public class Controller {
                 null,
                 new SendNotificationForm(currentUser).getRootPanel(),
                 "Send a new email or text message");
+
+        // add template tab as instanced variable
         tabbedPane.addTab("<html><body><table><tr><td height='60'>" +
                         "Templates" +
                         "</td></tr></table></body></html>",
                 null,
-                new ViewTemplatesForm().getRootPanel(),
+                templatesTab.getRootPanel(),
                 "Create or edit notification templates");
+
         tabbedPane.addTab("<html><body><table><tr><td height='60'>" +
                         "View Notification Log" +
                         "</td></tr></table></body></html>",
                 null,
                 new NotificationLog().getRootPanel(),
                 "See old messages sent");
+        if (!currentUser.getRole().equals("Manager")) {
+            tabbedPane.setEnabledAt(1, false);
+            tabbedPane.setBackgroundAt(1, Color.gray);
+        }
 
         showForm(tabbedPanel, windowFrame);
     }
@@ -79,10 +94,11 @@ public class Controller {
     public static void showForm(GUIForm form, JFrame frame) {
         JPanel root = form.getRootPanel();
 
-        //frame.getContentPane().removeAll();
+        frame.getContentPane().removeAll();
+        frame.dispose();
         frame.getContentPane().add(root);
         frame.pack();
-        frame.setLocationRelativeTo(null);
+        frame.setLocationRelativeTo(root);
         frame.setVisible(true);
     }
 
@@ -92,5 +108,9 @@ public class Controller {
      */
     public static void setUser(Person user) {
         currentUser = user;
+    }
+
+    public static void updateTemplatesTab() {
+        templatesTab.showTemplatesTable();
     }
 }

@@ -36,6 +36,9 @@ public class LoginForm implements GUIForm {
                     } else {
                         System.out.println("User " + currentUser.getFirstName() + " logged in successfully.");
                         Controller.setUser(currentUser);
+                        // close current Login window
+                        Controller.close();
+                        // show main program GUI
                         Controller.showUI();
                     }
                 }

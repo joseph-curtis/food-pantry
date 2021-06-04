@@ -51,12 +51,20 @@ public class Database {
             " VALUES (?, ?, ?);";
     private static final String GET_ID
             = "SELECT @@IDENTITY AS PK_ID;";
+    private static final String GET_TEMPLATE
+            = "SELECT name, temp_subject, temp_body " +
+            " FROM TEMPLATE " +
+            " WHERE PK_Template_ID = ?;";
     private static final String GET_ALL_TEMPLATES
             = "SELECT PK_Template_ID, name, temp_subject, temp_body " +
-            " FROM TEMPLATE";
+            " FROM TEMPLATE;";
     private static final String INSERT_TEMPLATE
             = "INSERT INTO TEMPLATE (name, temp_subject, temp_body) " +
             " VALUES (?, ?, ?);";
+    private static final String UPDATE_TEMPLATE
+            = "UPDATE TEMPLATE " +
+            " SET name = ?, temp_subject = ?, temp_body = ? " +
+            " WHERE PK_Template_ID = ?;";
 
 
     // The one and only connection object
@@ -218,6 +226,31 @@ public class Database {
         }
     }
 
+    public static Template getTemplate(int templateID) {
+        Template template = null;
+        connect();
+
+        try {
+            PreparedStatement stmt = connection.prepareStatement(GET_TEMPLATE);
+            stmt.setInt(1, templateID);
+            ResultSet rs = stmt.executeQuery();
+
+            rs.next();
+            template = new Template(
+                    templateID,
+                    rs.getString("name"),
+                    rs.getString("temp_subject"),
+                    rs.getString("temp_body")
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // close off connection
+            close();
+        }
+        return template;
+    }
+
     public static ArrayList<Template> getAllTemplatesList() {
         ArrayList<Template> templateList = new ArrayList<>();
         connect();
@@ -275,10 +308,43 @@ public class Database {
         }
     }
 
+    public static void editTemplate(int templateID, String name, String temp_subject, String temp_body) {
+        connect();
+
+        try (PreparedStatement updateTemplate = connection.prepareStatement(UPDATE_TEMPLATE)) {
+
+            // start transaction
+            connection.setAutoCommit(false);
+
+            updateTemplate.setString(1, name);
+            updateTemplate.setString(2, temp_subject);
+            updateTemplate.setString(3, temp_body);
+            updateTemplate.setInt(4, templateID);
+            updateTemplate.executeUpdate();
+
+            // end transaction & commit
+            connection.commit();
+            System.out.println("Template updated successfully in the database.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                if (!connection.isClosed()) {
+                    connection.rollback();
+                }
+            } catch (SQLException except) {
+                except.printStackTrace();
+            }
+            throw new RuntimeException("Error writing to database: " + e);
+        } finally {
+            // close off connection
+            close();
+        }
+    }
+
     /**
      * helper class to close connection leak
      */
-    static public void close() {
+    public static void close() {
         try {
             if (!connection.isClosed()) {
                 connection.close();

@@ -9,8 +9,6 @@ import javax.mail.Message;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-// sourced some code from https://github.com/PCC-CIS-234A/JavaMail/blob/master/src/Main.java
-
 /**
  * Holds message data and can email or text (sprint 2).
  * Also saves message to database.
