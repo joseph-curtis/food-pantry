@@ -9,8 +9,6 @@ import javax.mail.Message;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-// sourced some code from https://github.com/PCC-CIS-234A/JavaMail/blob/master/src/Main.java
-
 /**
  * Holds message data and can email or text (sprint 2).
  * Also saves message to database.
@@ -40,9 +38,6 @@ public class Notification {
      * @return true if email sent successfully
      */
     public boolean sendEmail() throws RuntimeException {
-        //String signedTextBody = textBody + "<p>From:<br/>"
-        //        + fromPerson.getFirstName() + ' ' + fromPerson.getLastName() + "</p>";
-
         return sendEmail(fromPerson.getEmail(), sendToEmailString, subject, textBody);
     }
 
@@ -91,6 +86,14 @@ public class Notification {
             // network is unavailable
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public void sendSMS(){
+        for(Person person : studentList){
+            if(person.isActivated()  && person.isReceiveSMS() && person.getPhone() != null){
+                SMS.sendMessage(person.getPhone(), textBody);
+            }
         }
     }
 

@@ -1,12 +1,18 @@
 package presentation;
 
+import data.Database;
+import logic.Parser;
 import logic.Person;
 import logic.Notification;
+import logic.Template;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
 
 /**
  * UI to send notifications to subscribers
@@ -24,12 +30,16 @@ public class SendNotificationForm implements GUIForm {
     private JPanel bodyPanel;
     private JPanel recipientPanel;
     private JLabel recipientLabel;
+    private JComboBox templateComboBox;
+    private ArrayList<Template> templates;
 
     /**
      * Constructor sets properties for declared components
      */
     public SendNotificationForm(Person currentUser) {
         rootPanel.setPreferredSize(new Dimension(400, 500));
+
+        setupTemplateCombo();
 
         sendButton.addActionListener(new ActionListener() {
             @Override
@@ -40,45 +50,79 @@ public class SendNotificationForm implements GUIForm {
                         Person.getStudentList(), currentUser, subjectTextField.getText(), bodyTextArea.getText()
                 );
 
+                notification.sendSMS();
                 // Send message confirmation dialog
+                int input = JOptionPane.showConfirmDialog(null,
+                        "Send this notification?", "Confirm Message Send"
+                        , JOptionPane.YES_NO_OPTION , JOptionPane.QUESTION_MESSAGE
+                );
 
-                try {
-                    emailSentSuccess = notification.sendEmail();
-                } catch (RuntimeException exception) {
-                    addressError = true;
-                    JOptionPane.showMessageDialog(rootPanel
-                            , "An address was incorrect!  Check the following addresses:\n"
-                                    + "FROM= " + currentUser.toEmailString()
-                                    + "; TO= " + notification.getSendToEmailString()
-                            , "ERROR AddressException", JOptionPane.WARNING_MESSAGE
-                    );
-                } finally {
-                    if (emailSentSuccess) {
+                if (input == 0) {
+                    try {
+                        emailSentSuccess = notification.sendEmail();
+                    } catch (RuntimeException exception) {
+                        addressError = true;
                         JOptionPane.showMessageDialog(rootPanel
-                                , "Email sent successfully!"
-                                , "Success", JOptionPane.INFORMATION_MESSAGE
+                                , "An address was incorrect!  Check the following addresses:\n"
+                                        + "FROM= " + currentUser.toEmailString()
+                                        + "; TO= " + notification.getSendToEmailString()
+                                , "ERROR AddressException", JOptionPane.WARNING_MESSAGE
                         );
-                        try {
-                            // save message to the database
-                            notification.saveMessage();
-                            subjectTextField.setText("");
-                            bodyTextArea.setText("");
-                        } catch (RuntimeException exception) {
-                            exception.printStackTrace();
+                    } finally {
+                        if (emailSentSuccess) {
                             JOptionPane.showMessageDialog(rootPanel
-                                    , "Check database state"
-                                    , "DATABASE ERROR", JOptionPane.ERROR_MESSAGE
+                                    , "Email sent successfully!"
+                                    , "Success", JOptionPane.INFORMATION_MESSAGE
                             );
-                            // print message out to save later
-                            System.out.print(notification.toString());
-                        }
+                            try {
+                                // save message to the database
+                                notification.saveMessage();
+                                subjectTextField.setText("");
+                                bodyTextArea.setText("");
+                            } catch (RuntimeException exception) {
+                                exception.printStackTrace();
+                                JOptionPane.showMessageDialog(rootPanel
+                                        , "Check database state"
+                                        , "DATABASE ERROR", JOptionPane.ERROR_MESSAGE
+                                );
+                                // print message out to save later
+                                System.out.print(notification.toString());
+                            }
 
-                    } else if (!addressError) {
-                        JOptionPane.showMessageDialog(rootPanel
-                                , "Check network connection"
-                                , "Network Unavailable", JOptionPane.ERROR_MESSAGE
-                        );
+                        } else if (!addressError) {
+                            JOptionPane.showMessageDialog(rootPanel
+                                    , "Check network connection"
+                                    , "Network Unavailable", JOptionPane.ERROR_MESSAGE
+                            );
+                        }
                     }
+                }
+            }
+        });
+    }
+
+    public void setupTemplateCombo(){
+        templates = Database.getAllTemplatesList();
+        templateComboBox.addItem(null);
+        for(Template template : templates){
+            templateComboBox.addItem(template.getSubject());
+        }
+
+        templateComboBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    int index =  templateComboBox.getSelectedIndex();
+
+                    subjectTextField.setText(templates.get(index-1).getSubject());
+                    subjectTextField.setEditable(false);
+
+                    bodyTextArea.setText(templates.get(index-1).getTextBody());
+                    bodyTextArea.setEditable(false);
+
+                    ArrayList<String>  tags = Parser.parseTags(templates.get(index-1).getTextBody());
+
+                    bodyTextArea.setText(Parser.tagFields(tags, templates.get(index-1).getTextBody()));
                 }
             }
         });

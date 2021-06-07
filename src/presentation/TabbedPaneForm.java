@@ -1,5 +1,4 @@
 package presentation;
-// used as template:  https://github.com/PCC-CIS-234A/GraphTV/blob/master/src/main/Controller.java
 
 import javax.swing.*;
 

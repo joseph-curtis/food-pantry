@@ -4,8 +4,12 @@
 //
 //  Software:	Microsoft SQL Server Management Studio - (Transact SQL)
 //				SQL Server 2012 architecture
+<<<<<<< HEAD
 
 //  version:	05.28.2021
+=======
+//  version:	05.23.2021
+>>>>>>> 643283eda794d644472cebe1eb52cc78b735f0a8
 //  Notes:      copy/paste this in SQL Server Management Studio and execute
 ********************************************************************************
 */
@@ -35,6 +39,11 @@ IF OBJECT_ID('TEMPLATE', 'U') IS NOT NULL
 		PRINT 'TEMPLATE table has been dropped';
 	END;
 
+IF OBJECT_ID('SETTINGS', 'U') IS NOT NULL
+	BEGIN
+		DROP TABLE SETTINGS;
+		PRINT 'SETTINGS table has been dropped';
+	END;
 IF OBJECT_ID('PERSON', 'U') IS NOT NULL
 	BEGIN
 		DROP TABLE PERSON;
@@ -57,8 +66,11 @@ CREATE TABLE PERSON
 	, role              NVARCHAR(30)        NOT NULL
 	, phone             NVARCHAR(10)        NULL
 	, activated			BIT					NOT NULL	DEFAULT 0
+<<<<<<< HEAD
 	, receive_email		BIT					NOT NULL	DEFAULT 0		
 	, receive_sms		BIT					NOT NULL	DEFAULT 0
+=======
+>>>>>>> 643283eda794d644472cebe1eb52cc78b735f0a8
 	);
 CREATE TABLE TEMPLATE
 	(
@@ -83,6 +95,15 @@ CREATE TABLE RECIPIENT
 	, FK_Message_ID     INT                 NOT NULL
 	, to_email          VARCHAR(60)         NOT NULL
 	);
+CREATE TABLE SETTINGS
+	(
+	PK_Settings_ID		INT IDENTITY(1, 1)	NOT NULL	PRIMARY KEY
+	, FK_Person_ID		INT				  	NULL
+	, email				BIT					NOT NULL	DEFAULT 0		
+	, sms				BIT					NOT NULL	DEFAULT 0
+	, both				BIT					NOT NULL	DEFAULT 0
+	, opt_out			BIT					NOT NULL	DEFAULT 0
+	);
 
 /* =================== */
 /* ADD fk constraints: */
@@ -104,6 +125,14 @@ ALTER TABLE RECIPIENT
 	ADD CONSTRAINT FK_RECIPIENT_message_MESSAGE_id
 	FOREIGN KEY (FK_Message_ID) REFERENCES MESSAGE(PK_Message_ID);
 
+<<<<<<< HEAD
+=======
+ALTER TABLE SETTINGS
+	ADD CONSTRAINT FK_SETTINGS_Person_PERSON_id
+	FOREIGN KEY (FK_Person_ID) REFERENCES PERSON(PK_Person_ID);
+
+
+>>>>>>> 643283eda794d644472cebe1eb52cc78b735f0a8
 /* =============== */
 /* CREATE indexes: */
 /* =============== */

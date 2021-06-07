@@ -13,6 +13,7 @@ USE cis234a_team_JK_LOL;
 /* =========== */
 /* add people: */
 /* =========== */
+SELECT * FROM PERSON
 
 INSERT INTO PERSON (firstname, lastname, username, password_hash, email, role, activated, receive_email, receive_sms)
 VALUES (
@@ -76,6 +77,69 @@ VALUES (
     , 1
     , 1
     , 1
+);
+
+INSERT INTO PERSON (firstname, lastname, username, password_hash, email, phone, role)
+VALUES (
+    'Jack'
+    , 'Dillon'
+    , 'Jack'
+    , HASHBYTES('SHA2_256', CONVERT(NVARCHAR(MAX), 'password'))
+    , 'jack.dillon1@pcc.edu'
+	, 9257681212
+    , 'Student'
+);
+
+SELECT * FROM PERSON
+SELECT * FROM SETTINGS
+
+/* ============================= */
+/* add subscriber settings       */
+/* ============================= */
+
+INSERT INTO SETTINGS(FK_Person_ID, email, sms, both, opt_out)
+VALUES (
+     1
+    , 0
+    , 0
+    , 0
+	, 1
+);
+
+INSERT INTO SETTINGS(FK_Person_ID, email, sms, both, opt_out)
+VALUES (
+     2
+    , 0
+    , 0
+    , 0
+	, 1
+);
+
+INSERT INTO SETTINGS(FK_Person_ID, email, sms, both, opt_out)
+VALUES (
+     3
+    , 0
+    , 0
+    , 1
+	, 0
+);
+
+INSERT INTO SETTINGS(FK_Person_ID, email, sms, both, opt_out)
+VALUES (
+     4
+    , 0
+    , 0
+    , 0
+	, 1
+);
+
+INSERT INTO SETTINGS(FK_Person_ID, email, sms, both, opt_out)
+VALUES (
+     5
+    , 0
+    , 0
+    , 1
+	, 0
 );
 
 /* ============================= */

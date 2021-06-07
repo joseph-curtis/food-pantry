@@ -38,7 +38,10 @@ public class Parser {
                 msgBody = msgBody.replace(field.getLabel().getText(), field.getTextField().getText());
             }
         }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 643283eda794d644472cebe1eb52cc78b735f0a8
         return msgBody;
     }
 }

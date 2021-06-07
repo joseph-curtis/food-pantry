@@ -1,7 +1,5 @@
 package main;
 
-import presentation.SendNotificationForm;
-
 import javax.swing.*;
 
 public class Main

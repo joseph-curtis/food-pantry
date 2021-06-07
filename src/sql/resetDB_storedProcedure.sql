@@ -3,15 +3,16 @@
 //  Author:	    Joseph Curtis
 //  Software:	Microsoft SQL Server Management Studio - (Transact SQL)
 //				SQL Server 2012 architecture
+<<<<<<< HEAD
 
+=======
+>>>>>>> 643283eda794d644472cebe1eb52cc78b735f0a8
 //  Date:		05.23.2021
 //  Server:		cisdbss.pcc.edu
 //  Notes:		This script creates a Procedure that creates the DB tables
 				and then inserts additional new data.
-
 // TO TEST:  run the following--
 EXECUTE resetDB;
-
 4/20/2021:    first draft, no execute permissions! Use RESET_DB.sql
 ********************************************************************************
 */
