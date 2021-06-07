@@ -105,7 +105,7 @@ public class SendNotificationForm implements GUIForm {
         templates = Database.getAllTemplatesList();
         templateComboBox.addItem(null);
         for(Template template : templates){
-            templateComboBox.addItem(template.getSubject());
+            templateComboBox.addItem(template.getName());
         }
 
         templateComboBox.addItemListener(new ItemListener() {

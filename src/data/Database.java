@@ -125,7 +125,7 @@ public class Database {
         try {
             PreparedStatement stmt = connection.prepareStatement(LOGIN_SQL);
             stmt.setString(1, username);
-            stmt.setString(2,  String.valueOf(password));
+            stmt.setString(2, String.valueOf(password));
             ResultSet rs = stmt.executeQuery();
 
             rs.next();

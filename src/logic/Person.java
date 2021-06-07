@@ -9,7 +9,7 @@ import java.util.ArrayList;
  * @version 2021.05.21
  */
 public class Person {
-    private Integer person_id;
+    private int person_id;
     private String firstName;
     private String lastName;
     private String username;
@@ -42,6 +42,7 @@ public class Person {
         this.role = role;
         this.email = email;
     }
+
     /**
      * Constructor for student subscribers
      * @param person_id
@@ -49,9 +50,7 @@ public class Person {
      * @param lastName
      * @param email
      */
-    //public Person (Integer person_id, String firstName, String lastName, String email) {
-
-    public Person (Integer person_id, String firstName, String lastName, String email, String phone, boolean activated, boolean receiveEmail, boolean receiveSMS) {
+    public Person (int person_id, String firstName, String lastName, String email, String phone, boolean activated, boolean receiveEmail, boolean receiveSMS) {
         this.person_id = person_id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -79,7 +78,7 @@ public class Person {
         return Database.login(username, password);
     }
 
-    public Integer getID() {
+    public int getID() {
         return person_id;
     }
     public String getFirstName() {
@@ -99,7 +98,7 @@ public class Person {
         return role;
     }
 
-    public Integer getPerson_id() {
+    public int getPerson_id() {
         return person_id;
     }
 
@@ -129,7 +128,7 @@ public class Person {
         if (o == null) return false;
         if (o.getClass() == this.getClass()) {
             Person p = (Person) o;
-            if (!person_id.equals(p.getID())) return false;
+            if (person_id != p.getID()) return false;
             if (!firstName.equals(p.getFirstName())) return false;
             if (!lastName.equals(p.getLastName())) return false;
             if (!email.equals(p.getEmail())) return false;
