@@ -21,13 +21,15 @@ public class Template {
         this.subject = subject;
         this.textBody = textBody;
     }
-//    public Template(String name, String subject, String textBody) {
-//        new Template(-1, name, subject, textBody);
-//    }
+
+    public Template(String name, String subject, String textBody) {
+        new Template(-1, name, subject, textBody);
+    }
 
     public static ArrayList<Template> getTemplatesList() {
         return Database.getAllTemplatesList();
     }
+
 
     public void saveTemplate() throws RuntimeException {
         Database.saveTemplate(name, subject, textBody);
@@ -74,3 +76,4 @@ public class Template {
         this.textBody = body;
     }
 }
+

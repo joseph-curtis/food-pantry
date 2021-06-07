@@ -15,6 +15,10 @@ public class Person {
     private String username;
     private String role;
     private String email;
+    private String phone;
+    private boolean activated;
+    private boolean receiveEmail;
+    private boolean receiveSMS;
 
     /**
      * Constructor for User logged in (staff member)
@@ -38,7 +42,6 @@ public class Person {
         this.role = role;
         this.email = email;
     }
-
     /**
      * Constructor for student subscribers
      * @param person_id
@@ -46,13 +49,19 @@ public class Person {
      * @param lastName
      * @param email
      */
-    public Person (Integer person_id, String firstName, String lastName, String email) {
+    //public Person (Integer person_id, String firstName, String lastName, String email) {
+
+    public Person (Integer person_id, String firstName, String lastName, String email, String phone, boolean activated, boolean receiveEmail, boolean receiveSMS) {
         this.person_id = person_id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = null;
         this.role = "Student";
         this.email = email;
+        this.phone = phone;
+        this.activated = activated;
+        this.receiveEmail = receiveEmail;
+        this.receiveSMS = receiveSMS;
     }
 
     public static ArrayList<Person> getStudentList() {
@@ -66,7 +75,7 @@ public class Person {
      * @param password
      * @return the user (Person object) if user is staff member and authenticated
      */
-    public static Person authenticateStaffUser(String username, String password) {
+    public static Person authenticateStaffUser(String username, char[] password) {
         return Database.login(username, password);
     }
 
@@ -88,6 +97,30 @@ public class Person {
 
     public String getRole() {
         return role;
+    }
+
+    public Integer getPerson_id() {
+        return person_id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public boolean isActivated() {
+        return activated;
+    }
+
+    public boolean isReceiveEmail() {
+        return receiveEmail;
+    }
+
+    public boolean isReceiveSMS() {
+        return receiveSMS;
+    }
+
+    public String getPhone() {
+        return phone;
     }
 
     @Override

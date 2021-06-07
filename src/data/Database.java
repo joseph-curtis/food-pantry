@@ -40,9 +40,9 @@ public class Database {
             "GROUP BY PK_Message_ID, subject, textbody, datetime, firstname, lastname\n" +
             "ORDER BY datetime DESC;";
     private static final String GET_ALL_STUDENTS
-            = "SELECT PK_Person_ID, firstname, lastname, email" +
-            " FROM PERSON" +
-            " WHERE role = 'Student'";
+            = "SELECT PK_Person_ID, firstname, lastname, email, phone, activated, receive_email, receive_sms" +
+            " FROM PERSON " +
+            " WHERE role = 'Student';";
     private static final String INSERT_MESSAGE
             = "INSERT INTO MESSAGE (FK_FromPerson_ID, subject, textbody, datetime)" +
             " VALUES (?, ?, ?, CAST(GETDATE() AS smalldatetime));";
@@ -66,10 +66,8 @@ public class Database {
             " SET name = ?, temp_subject = ?, temp_body = ? " +
             " WHERE PK_Template_ID = ?;";
 
-
     // The one and only connection object
     public static Connection connection = null;
-
 
     /**
      * Creates database connection
@@ -120,14 +118,14 @@ public class Database {
         return messages;
     }
 
-    public static Person login(String username, String password) {
+    public static Person login(String username, char[] password) {
         Person currentUser = null;
         connect();
 
         try {
             PreparedStatement stmt = connection.prepareStatement(LOGIN_SQL);
             stmt.setString(1, username);
-            stmt.setString(2, password);
+            stmt.setString(2,  String.valueOf(password));
             ResultSet rs = stmt.executeQuery();
 
             rs.next();
@@ -160,8 +158,11 @@ public class Database {
                         rs.getInt("PK_Person_ID"),
                         rs.getString("firstname"),
                         rs.getString("lastname"),
-                        rs.getString("email")
-                ));
+                        rs.getString("email"),
+                        rs.getString("phone"),
+                        rs.getBoolean("activated"),
+                        rs.getBoolean("receive_email"),
+                        rs.getBoolean("receive_sms")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -344,7 +345,8 @@ public class Database {
     /**
      * helper class to close connection leak
      */
-    public static void close() {
+    static public void close() {
+
         try {
             if (!connection.isClosed()) {
                 connection.close();

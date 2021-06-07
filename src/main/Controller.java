@@ -1,12 +1,13 @@
 package main;
 
+import com.formdev.flatlaf.FlatLightLaf;
 import logic.Person;
 import presentation.*;
 import presentation.LoginForm;
 import presentation.NotificationLog;
-import presentation.GUIForm;
 import presentation.SendNotificationForm;
 import presentation.TabbedPaneForm;
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,13 +15,19 @@ import java.awt.*;
 public class Controller {
     private static Person currentUser = null;
     private static JFrame windowFrame = null;
+    private static TabbedPaneForm tabbedPanel;
+    private static JTabbedPane tabbedPane;
+    private static ViewTemplatesForm templatesTab;
 
-    private static TabbedPaneForm tabbedPanel = new TabbedPaneForm();
-    private static JTabbedPane tabbedPane = tabbedPanel.getTabbedPane();
-    private static ViewTemplatesForm templatesTab = new ViewTemplatesForm();
 
     public static void start() {
         // login form
+        FlatLightLaf.install();
+
+        tabbedPanel = new TabbedPaneForm();
+        tabbedPane = tabbedPanel.getTabbedPane();
+        templatesTab = new ViewTemplatesForm();
+
         windowFrame = new JFrame("Staff User Login");
         windowFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         showForm(new LoginForm(), windowFrame);
@@ -78,6 +85,7 @@ public class Controller {
                 null,
                 new NotificationLog().getRootPanel(),
                 "See old messages sent");
+
         if (!currentUser.getRole().equals("Manager")) {
             tabbedPane.setEnabledAt(1, false);
             tabbedPane.setBackgroundAt(1, Color.gray);
@@ -93,9 +101,6 @@ public class Controller {
      */
     public static void showForm(GUIForm form, JFrame frame) {
         JPanel root = form.getRootPanel();
-
-        frame.getContentPane().removeAll();
-        frame.dispose();
         frame.getContentPane().add(root);
         frame.pack();
         frame.setLocationRelativeTo(root);

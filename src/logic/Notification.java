@@ -38,9 +38,6 @@ public class Notification {
      * @return true if email sent successfully
      */
     public boolean sendEmail() throws RuntimeException {
-        //String signedTextBody = textBody + "<p>From:<br/>"
-        //        + fromPerson.getFirstName() + ' ' + fromPerson.getLastName() + "</p>";
-
         return sendEmail(fromPerson.getEmail(), sendToEmailString, subject, textBody);
     }
 
@@ -89,6 +86,14 @@ public class Notification {
             // network is unavailable
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public void sendSMS(){
+        for(Person person : studentList){
+            if(person.isActivated()  && person.isReceiveSMS() && person.getPhone() != null){
+                SMS.sendMessage(person.getPhone(), textBody);
+            }
         }
     }
 

@@ -1,12 +1,18 @@
 package presentation;
 
+import data.Database;
+import logic.Parser;
 import logic.Person;
 import logic.Notification;
+import logic.Template;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
 
 /**
  * UI to send notifications to subscribers
@@ -24,12 +30,16 @@ public class SendNotificationForm implements GUIForm {
     private JPanel bodyPanel;
     private JPanel recipientPanel;
     private JLabel recipientLabel;
+    private JComboBox templateComboBox;
+    private ArrayList<Template> templates;
 
     /**
      * Constructor sets properties for declared components
      */
     public SendNotificationForm(Person currentUser) {
         rootPanel.setPreferredSize(new Dimension(400, 500));
+
+        setupTemplateCombo();
 
         sendButton.addActionListener(new ActionListener() {
             @Override
@@ -40,6 +50,7 @@ public class SendNotificationForm implements GUIForm {
                         Person.getStudentList(), currentUser, subjectTextField.getText(), bodyTextArea.getText()
                 );
 
+                notification.sendSMS();
                 // Send message confirmation dialog
                 int input = JOptionPane.showConfirmDialog(null,
                         "Send this notification?", "Confirm Message Send"
@@ -85,6 +96,33 @@ public class SendNotificationForm implements GUIForm {
                             );
                         }
                     }
+                }
+            }
+        });
+    }
+
+    public void setupTemplateCombo(){
+        templates = Database.getAllTemplatesList();
+        templateComboBox.addItem(null);
+        for(Template template : templates){
+            templateComboBox.addItem(template.getSubject());
+        }
+
+        templateComboBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    int index =  templateComboBox.getSelectedIndex();
+
+                    subjectTextField.setText(templates.get(index-1).getSubject());
+                    subjectTextField.setEditable(false);
+
+                    bodyTextArea.setText(templates.get(index-1).getTextBody());
+                    bodyTextArea.setEditable(false);
+
+                    ArrayList<String>  tags = Parser.parseTags(templates.get(index-1).getTextBody());
+
+                    bodyTextArea.setText(Parser.tagFields(tags, templates.get(index-1).getTextBody()));
                 }
             }
         });
