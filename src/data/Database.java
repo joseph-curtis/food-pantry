@@ -118,7 +118,6 @@ public class Database {
         try {
             PreparedStatement stmt = connection.prepareStatement(LOGIN_SQL);
             stmt.setString(1, username);
-            //System.out.println(password);
             stmt.setString(2,  String.valueOf(password));
             ResultSet rs = stmt.executeQuery();
 
