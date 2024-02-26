@@ -35,11 +35,11 @@ To ensure the security of our users, we have agreed upon password requirements. 
 -	are required to include at least one number, lowercase letter, uppercase letter, and special character
 
 ## Database ERD Naming Standards
-**Table names** are all caps with underscores separating words:  `TABLE_NAME`
-**Primary keys** will have CamelCase and `PK_` in front and `_ID` on end, i.e.  `PK_NamedKey_ID`
-**Foreign keys** will have CamelCase and FK\_ in front and \_ID on end, i.e.  `FK_NamedKey_ID`
-**Views** and **cursors** will have `VIEW_` and `CURS_`  in front and CamelCase
-All **attributes** are *lowercase*
+- *Table names* are **all caps** with underscores separating words:  `TABLE_NAME`
+- *Primary keys* will have **CamelCase** and `PK_` in front and `_ID` on end, i.e.  `PK_NamedKey_ID`
+- *Foreign keys* will have **CamelCase** and FK\_ in front and \_ID on end, i.e.  `FK_NamedKey_ID`
+- *Views* and *cursors* will have `VIEW_` and `CURS_`  in front and **CamelCase**
+- All *attributes* are **lowercase** with underscores
 
 ## Design Standards
 To ensure unity with other PCC services, we will use the brand standard color palette as described in the style guide here: https://www.pcc.edu/web-services/style-guide/basics/color/.
